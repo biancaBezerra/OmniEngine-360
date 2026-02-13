@@ -7,6 +7,7 @@ class GameEngine {
     this.state = null;
     this.view360 = null;
     this.hotspots = null;
+    this.events = null;
   }
 
   async init() {
@@ -16,7 +17,14 @@ class GameEngine {
     this.themeParams.applyTheme(this.config.theme);
     this.state = new GameState(this.config);
     this.view360 = new ThreeSixtyView("three-canvas");
+
+     // PASSA A IMAGEM DO GLITCH PARA O ThreeSixtyView
+    if (this.config.theme.assets.glitch_effect) {
+      this.view360.setGlitchImage(this.config.theme.assets.glitch_effect);
+    }
+
     this.hotspots = new HotspotController("hotspots-layer", this.view360);
+    this.events = new EventController(this);
 
     // --- LÓGICA DE ÁUDIO INICIAL ---
 
@@ -72,6 +80,8 @@ class GameEngine {
       if (this.config.meta.menu_bgm) {
         this.audio.playBGM(this.config.meta.menu_bgm);
       }
+      this.cleanupSceneEffects(); // Limpa efeitos visuais e de áudio da cena anterior
+      this.state.reset(); // Reseta o estado do jogo, incluindo eventos
     }
   }
 
@@ -79,6 +89,14 @@ class GameEngine {
     this.ui.renderLevelSelect(sceneData.cards, sceneData.background, (card) => {
       this.load360Scene(card.targetScene);
     });
+  }
+
+  // Método para reiniciar UMA cena específica
+  resetAndPlayScene(sceneId) {
+    // Reseta o progresso DESTA cena
+    this.state.resetScene(sceneId);
+    // Carrega a cena novamente
+    this.load360Scene(sceneId);
   }
 
   load360Scene(sceneId) {
@@ -116,35 +134,121 @@ class GameEngine {
       this.handleHotspotClick(hotspot, scene),
     );
 
+    // NÃO reseta automaticamente - mantém progresso
+    // Se quiser SEMPRE resetar ao entrar, descomente a linha abaixo:
+    // this.state.resetScene(sceneId);
+
     this.updateUI();
   }
 
   handleHotspotClick(hotspot, sceneData) {
-    const isFirstVisit = this.state.registerVisit(hotspot.id);
-    this.updateUI();
-
+    // --- HOTSPOT DE DIÁLOGO (EXPLORAÇÃO) ---
     if (hotspot.action === "dialog") {
-      this.ui.showNarrator(hotspot.content);
-    } else if (hotspot.action === "quiz") {
-      if (this.state.canUnlockQuiz(sceneData.hotspots)) {
-        this.ui.showQuiz(hotspot, (isCorrect) => {
-          if (isCorrect) {
-            this.state.addScore(this.config.gameplay.points_quiz_correct);
+      // Registra a visita
+      const isFirstVisit = this.state.registerVisit(hotspot.id);
+      this.updateUI();
+      
+      // Verifica se este é o ÚLTIMO hotspot
+      const isFullyExplored = this.state.isSceneFullyExplored(sceneData.id);
+      const eventNotTriggered = !this.state.eventsTriggered.has(sceneData.id);
+      
+      // MOSTRA O DIÁLOGO e PASSA um callback para QUANDO terminar
+      this.ui.showNarrator(
+        hotspot.content,  // Mensagem do hotspot (Ada, Mouse, etc.)
+        () => {
+          // ESTE CÓDIGO EXECUTA QUANDO CLICAR EM "PRÓXIMO"
+          
+          // Se acabou de completar a exploração E evento ainda não aconteceu
+          if (isFullyExplored && eventNotTriggered && isFirstVisit) {
+            // SÓ AGORA mostra a mensagem de desbloqueio!
             this.ui.showNarrator(
-              "Excelente! Módulo recuperado. Voltando ao Hub...",
-              () => this.goHome(),
+              "🎯 Protocolo de Verificação desbloqueado! Clique no ícone para iniciar.",
+              null, // Sem callback adicional
+              "byte"
             );
-          } else {
-            this.state.addScore(this.config.gameplay.points_quiz_retry);
           }
-          this.updateUI();
-        });
-      } else {
+        },
+        "byte" // B.Y.T.E. fala
+      );
+      
+      return;
+    }
+
+    // --- HOTSPOT DE QUIZ ---
+    if (hotspot.action === "quiz") {
+      const isFullyExplored = this.state.isSceneFullyExplored(sceneData.id);
+      
+      if (!isFullyExplored) {
         this.ui.showNarrator(
-          hotspot.locked_message || "Acesso negado. Explore mais.",
+          hotspot.locked_message || "Acesso negado. Complete a exploração primeiro.",
+          null,
+          "byte"
         );
+        return;
+      }
+      
+      if (!this.state.eventsTriggered.has(sceneData.id)) {
+        this.events.triggerVillainSequence(sceneData, hotspot);
+      } else {
+        this.openQuiz(hotspot, sceneData);
       }
     }
+  }
+
+  openQuiz(hotspot, sceneData) {
+    console.log("📝 Abrindo quiz"); // Debug
+    
+    if (!hotspot || !hotspot.questions) {
+      console.error("❌ Quiz hotspot inválido!", hotspot);
+      return;
+    }
+    
+    this.ui.showQuiz(hotspot, (isCorrect) => {
+      if (isCorrect) {
+        this.state.addScore(this.config.gameplay.points_quiz_correct);
+        
+        // Toca som de vitória
+        if (sceneData.event?.victory_sound) {
+          this.audio.playSFX(sceneData.event.victory_sound);
+        }
+        
+        // MOSTRA O GLITCH DERROTADO
+        if (this.events) {
+          this.events.villainDefeated(sceneData);
+        } else {
+          // Fallback se events não existir
+          this.ui.showNarrator(
+            sceneData.event?.villain_defeat || "Nããão! Derrotado!",
+            () => {
+              this.ui.showNarrator(
+                sceneData.event?.victory_message || "Sistema restaurado!",
+                () => this.goHome(),
+                "byte"
+              );
+            },
+            "villain"
+          );
+        }
+        
+      } else {
+        this.state.addScore(this.config.gameplay.points_quiz_retry);
+        this.ui.showNarrator(
+          hotspot.questions[0]?.feedback_wrong || "Tente novamente!",
+          null,
+          "byte"
+        );
+      }
+      this.updateUI();
+    });
+  }
+
+  cleanupSceneEffects() {
+    this.view360?.stopRedAlert();
+    this.view360?.hideStaticEffect();
+    this.view360?.hideSmokeEffect();
+    
+    const villain = document.getElementById('villain-container');
+    if (villain) villain.style.display = 'none';
   }
 
   updateUI() {
@@ -152,7 +256,8 @@ class GameEngine {
       (s) => s.id === this.state.currentSceneId,
     );
     const percent = scene ? this.state.getProgressPercent(scene.hotspots) : 0;
-    this.ui.updateTracker(this.state.score, percent);
+    // PASSA o sceneId para o UIController
+    this.ui.updateTracker(this.state.score, percent, this.state.currentSceneId);
   }
 }
 
