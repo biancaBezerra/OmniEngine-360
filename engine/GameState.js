@@ -3,6 +3,7 @@ class GameState {
     this.config = config;
     this.score = 0;
     this.visitedHotspots = new Set();
+    this.eventsTriggered = new Set(); // <-- NOVO: cenas cujo evento já ocorreu
     this.currentSceneId = null;
     this.totalHotspotsInScene = 0;
   }
@@ -10,6 +11,7 @@ class GameState {
   reset() {
     this.score = 0;
     this.visitedHotspots.clear();
+    this.eventsTriggered.clear(); // <-- NOVO - Reset completo
   }
 
   enterScene(sceneId, totalHotspots) {
@@ -76,5 +78,49 @@ class GameState {
       this.visitedHotspots.has(h.id),
     ).length;
     return Math.floor((visitedCount / required.length) * 100);
+  }
+
+  // Método para resetar UMA cena específica
+  resetScene(sceneId) {
+    // Remove apenas os hotspots visitados DESTA cena
+    const scene = this.config.scenes.find(s => s.id === sceneId);
+    if (scene) {
+      scene.hotspots.forEach(h => {
+        this.visitedHotspots.delete(h.id);
+      });
+    }
+    // Remove o evento disparado desta cena
+    this.eventsTriggered.delete(sceneId);
+  }
+
+  isSceneFullyExplored(sceneId) {
+    const scene = this.config.scenes.find(s => s.id === sceneId);
+    if (!scene) return false;
+    
+    // Pega APENAS os hotspots de diálogo (ignora o quiz)
+    const dialogHotspots = scene.hotspots.filter(h => h.action === "dialog");
+    
+    // Se não tem nenhum hotspot de diálogo, já está explorado
+    if (dialogHotspots.length === 0) return true;
+    
+    // Conta quantos já foram visitados
+    const visitedCount = dialogHotspots.filter(h => 
+      this.visitedHotspots.has(h.id)
+    ).length;
+    // Retorna TRUE se TODOS foram visitados
+    return visitedCount === dialogHotspots.length;
+  }
+
+  // Método para contar quantos diálogos faltam
+  getRemainingExploration(sceneId) {
+    const scene = this.config.scenes.find(s => s.id === sceneId);
+    if (!scene) return 0;
+    
+    const dialogHotspots = scene.hotspots.filter(h => h.action === "dialog");
+    const visitedCount = dialogHotspots.filter(h => 
+      this.visitedHotspots.has(h.id)
+    ).length;
+    
+    return dialogHotspots.length - visitedCount;
   }
 }
