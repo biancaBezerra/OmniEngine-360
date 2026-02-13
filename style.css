@@ -1,3 +1,5 @@
+/* style.css - VERSÃO MOBILE-FIRST COMPLETA */
+
 :root {
   /* Valores Default - serão sobrescritos pelo ThemeController */
   --primary-color: #00ff00;
@@ -8,8 +10,22 @@
   --glass-border: rgba(255, 255, 255, 0.2);
   --font-header: sans-serif;
   --font-body: sans-serif;
+  
+  /* Variáveis responsivas - base mobile */
+  --title-size: 2rem;
+  --panel-padding: 1rem;
+  --border-radius: 12px;
+  --hotspot-size: 40px;
+  --narrator-width: 95%;
+  --narrator-sprite-width: 120px;
+  --villain-width: 300px;
+  --card-width: 280px;
+  --gap-small: 10px;
+  --gap-medium: 15px;
+  --gap-large: 20px;
 }
 
+/* ===== RESET E BASE ===== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -23,15 +39,15 @@ body {
   overflow: hidden;
   width: 100vw;
   height: 100vh;
+  -webkit-tap-highlight-color: transparent; /* Remove highlight em mobile */
 }
 
-/* --- CORREÇÃO DO CONTAINER 3D --- */
+/* ===== CONTAINER 3D ===== */
 #scene-container {
   position: relative;
   width: 100%;
   height: 100%;
   display: none;
-  /* Começa oculto */
 }
 
 #three-canvas {
@@ -47,11 +63,10 @@ body {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  /* Deixa o clique passar para o 3D */
   z-index: 10;
 }
 
-/* --- FUNDO DINÂMICO (VÍDEO OU IMAGEM) --- */
+/* ===== FUNDO DINÂMICO ===== */
 #dynamic-background {
   position: fixed;
   top: 0;
@@ -59,7 +74,6 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  /* Fica atrás de todas as telas */
   background-color: #000;
   overflow: hidden;
 }
@@ -69,21 +83,12 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Garante que preencha a tela sem distorcer */
   position: absolute;
   top: 0;
   left: 0;
 }
 
-
-/* Garante que o painel do menu tenha fundo transparente para vermos o vídeo */
-#level-select {
-  background: transparent;
-}
-
-/* -------------------------------- */
-
-/* Telas Gerais */
+/* ===== TELAS GERAIS ===== */
 .screen {
   position: absolute;
   top: 0;
@@ -97,80 +102,76 @@ body {
   pointer-events: none;
 }
 
-/* CORREÇÃO CRÍTICA: 
-   Telas ativas normais (Start, Menu) têm fundo escuro e bloqueiam cliques.
-*/
 .screen.active {
   pointer-events: auto;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
 }
 
-/* CORREÇÃO CRÍTICA PARA O JOGO:
-   A tela de jogo NÃO pode ter fundo escuro e NÃO pode bloquear cliques globais.
-*/
 #game-ui.active {
   background: transparent;
   pointer-events: none;
-  /* Permite clicar no 3D atrás */
   display: block;
-  /* Garante que ocupa a tela, mas sem flex center */
 }
 
-/* Mas os botões e caixas DENTRO do jogo precisam ser clicáveis */
-#game-ui .ui-top,
-#game-ui .narrator-overlay,
-#game-ui .glass-panel {
-  pointer-events: none;
-  /* Containers transparentes não bloqueiam */
+#level-select {
+  background: transparent;
+  overflow-y: auto; /* Permite scroll em mobile */
+  padding: var(--panel-padding);
 }
 
-#game-ui button,
-#game-ui .dialog-box,
-#game-ui #mission-tracker,
-#game-ui .quiz-panel {
-  pointer-events: auto;
-  /* Elementos visíveis recebem clique */
-}
-
-/* Glassmorphism Panel */
+/* ===== GLASS PANEL ===== */
 .glass-panel {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 2rem;
+  border-radius: var(--border-radius);
+  padding: var(--panel-padding);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   text-align: center;
+  width: 90%;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-/* Tipografia */
-h1,
-h2,
-h3 {
+.full-panel {
+  max-width: 950px;
+  width: 100%;
+}
+
+/* ===== TIPOGRAFIA RESPONSIVA ===== */
+h1, h2, h3 {
   font-family: var(--font-header);
   text-transform: uppercase;
   letter-spacing: 2px;
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: var(--title-size);
   color: var(--primary-color);
   text-shadow: 0 0 10px var(--primary-color);
+  word-break: break-word;
 }
 
-/* Botões */
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ===== BOTÕES ===== */
 .cta-button {
   background: var(--primary-color);
   color: #000;
   border: none;
-  padding: 15px 40px;
-  font-size: 1.2rem;
+  padding: 12px 30px;
+  font-size: 1rem;
   font-weight: bold;
   font-family: var(--font-header);
   cursor: pointer;
   border-radius: 50px;
   margin-top: 20px;
   transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+  max-width: 300px;
 }
 
 .cta-button:hover {
@@ -178,25 +179,27 @@ h1 {
   box-shadow: 0 0 20px var(--primary-color);
 }
 
-/* UI HUD */
+/* ===== UI HUD ===== */
 .ui-top {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 20px;
+  top: 10px;
+  left: 10px;
+  right: 10px;
   display: flex;
   justify-content: space-between;
   pointer-events: none;
-  /* Container não bloqueia */
+  z-index: 50;
 }
 
 #mission-tracker {
   background: var(--glass-bg);
-  padding: 10px 20px;
+  padding: 8px 15px;
   border-radius: 20px;
   border: 1px solid var(--accent-color);
   font-family: var(--font-header);
   pointer-events: auto;
+  font-size: 0.85rem;
+  backdrop-filter: blur(5px);
 }
 
 #btn-home {
@@ -208,38 +211,58 @@ h1 {
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Narrator Overlay */
+/* ===== NARRATOR OVERLAY ===== */
 .narrator-overlay {
   position: absolute;
-  bottom: 20px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  max-width: 800px;
+  width: var(--narrator-width);
+  max-width: 900px;
   display: flex;
   align-items: flex-end;
-  gap: 20px;
+  gap: 10px;
   pointer-events: none;
-  /* IMPORTANTE: Área vazia não bloqueia */
+  z-index: 200;
 }
 
 .narrator-sprite {
-  width: 150px;
+  width: var(--narrator-sprite-width);
   filter: drop-shadow(0 0 10px var(--accent-color));
+  flex-shrink: 0;
+  transition: width 0.3s ease;
 }
 
 .dialog-box {
   flex: 1;
   background: var(--secondary-color);
   border: 1px solid var(--primary-color);
-  padding: 20px;
+  padding: 15px;
   border-radius: 10px;
   position: relative;
-  min-height: 100px;
+  min-height: 80px;
   pointer-events: auto;
-  /* A caixa de texto recebe clique */
+  z-index: 200;
+  width: 100%;
+  backdrop-filter: blur(5px);
+}
+
+#narrator-name {
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: var(--accent-color);
+}
+
+#narrator-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  padding-right: 30px;
 }
 
 .next-btn {
@@ -249,13 +272,14 @@ h1 {
   background: transparent;
   border: none;
   color: var(--primary-color);
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   cursor: pointer;
   animation: blink 1s infinite;
   pointer-events: auto;
+  padding: 5px;
 }
 
-/* --- HOTSPOTS --- */
+/* ===== HOTSPOTS ===== */
 .hotspot {
   position: absolute;
   z-index: 20;
@@ -271,8 +295,8 @@ h1 {
   top: 0;
   left: 0;
   transform: translate(-50%, -50%);
-  width: 45px;
-  height: 45px;
+  width: var(--hotspot-size);
+  height: var(--hotspot-size);
   background: var(--glass-bg);
   border: 2px solid var(--primary-color);
   border-radius: 50%;
@@ -294,17 +318,21 @@ h1 {
 
 .hotspot-label {
   position: absolute;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
   border: 1px solid var(--glass-border);
-  opacity: 0.9;
+  opacity: 0.95;
   font-family: var(--font-body);
   text-shadow: 0 1px 2px black;
   pointer-events: none;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .hotspot.top .hotspot-label {
@@ -331,22 +359,26 @@ h1 {
   transform: translateY(-50%);
 }
 
-/* Cards */
-.cards-grid {
-  display: flex;
-  gap: 20px;
+/* ===== CARDS GRID ===== */
+#cards-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap-medium);
   margin-top: 20px;
-  justify-content: center;
+  padding: 10px;
+  justify-items: center;
 }
 
 .level-card {
-  width: 250px;
-  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 350px;
+  background: rgba(0, 0, 0, 0.6);
   border: 1px solid var(--glass-border);
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
   transition: 0.3s;
+  backdrop-filter: blur(5px);
 }
 
 .level-card:hover {
@@ -361,27 +393,48 @@ h1 {
 }
 
 .level-card p {
-  padding: 10px;
+  padding: 12px;
+  font-size: 0.95rem;
 }
 
-/* Quiz */
+.level-card strong {
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+/* ===== QUIZ ===== */
 .modal-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
   pointer-events: auto;
-  /* O Quiz precisa bloquear tudo atrás */
+  z-index: 300;
+  padding: 15px;
+}
+
+.quiz-panel {
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+#quiz-question {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  word-break: break-word;
 }
 
 .options-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 10px;
   margin-top: 20px;
 }
@@ -392,6 +445,10 @@ h1 {
   padding: 15px;
   color: white;
   cursor: pointer;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  word-break: break-word;
 }
 
 .quiz-opt:hover {
@@ -409,8 +466,306 @@ h1 {
   border-color: var(--error-color);
 }
 
+#quiz-feedback {
+  margin-top: 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  min-height: 30px;
+}
+
+/* ===== EFEITOS ===== */
+#red-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 14;
+}
+
+#glitch-effect-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 15;
+}
+
+#villain-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.4s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 1.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#villain-container.visible {
+  opacity: 0.85;
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+#villain-sprite {
+  width: var(--villain-width);
+  filter: drop-shadow(0 0 30px rgba(255, 0, 0, 0.6)) blur(0.8px);
+  animation: villainFloatImponent 4s infinite ease-in-out;
+  opacity: 0.9;
+  transition: all 0.5s ease;
+}
+
+/* ===== KEYFRAMES ===== */
 @keyframes blink {
+  50% { opacity: 0; }
+}
+
+@keyframes villainFloatImponent {
+  0% {
+    transform: translateY(0px) scale(0.98);
+    filter: drop-shadow(0 0 25px rgba(255, 0, 0, 0.5)) blur(0.8px);
+  }
   50% {
-    opacity: 0;
+    transform: translateY(-15px) scale(1.05);
+    filter: drop-shadow(0 0 45px rgba(255, 0, 0, 0.8)) blur(1.2px);
+  }
+  100% {
+    transform: translateY(0px) scale(0.98);
+    filter: drop-shadow(0 0 25px rgba(255, 0, 0, 0.5)) blur(0.8px);
+  }
+}
+
+@keyframes pulseQuiz {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ===== TABLETS (768px - 1024px) ===== */
+@media screen and (min-width: 768px) {
+  :root {
+    --title-size: 2.5rem;
+    --panel-padding: 1.5rem;
+    --border-radius: 16px;
+    --hotspot-size: 45px;
+    --narrator-width: 90%;
+    --narrator-sprite-width: 160px;
+    --villain-width: 450px;
+    --card-width: 300px;
+  }
+
+  .ui-top {
+    top: 20px;
+    left: 20px;
+    right: 20px;
+  }
+
+  #mission-tracker {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+
+  .narrator-overlay {
+    bottom: 20px;
+    gap: 15px;
+  }
+
+  .dialog-box {
+    padding: 18px;
+    min-height: 100px;
+  }
+
+  #narrator-text {
+    font-size: 1rem;
+  }
+
+  #cards-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap-large);
+  }
+
+  .level-card {
+    max-width: 100%;
+  }
+
+  .options-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #villain-container,
+  #villain-container.visible {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ===== DESKTOP (1025px+) ===== */
+@media screen and (min-width: 1025px) {
+  :root {
+    --title-size: 3rem;
+    --panel-padding: 2rem;
+    --border-radius: 20px;
+    --hotspot-size: 50px;
+    --narrator-width: 80%;
+    --narrator-sprite-width: 200px;
+    --villain-width: 550px;
+  }
+
+  .ui-top {
+    top: 30px;
+    left: 30px;
+    right: 30px;
+  }
+
+  #mission-tracker {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+  }
+
+  .narrator-overlay {
+    bottom: 30px;
+    gap: 20px;
+  }
+
+  .dialog-box {
+    padding: 20px;
+  }
+
+  #narrator-text {
+    font-size: 1.1rem;
+  }
+
+  #cards-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+
+  .level-card {
+    max-width: 350px;
+  }
+
+  #villain-container,
+  #villain-container.visible {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+/* ===== TELAS MUITO PEQUENAS (até 380px) ===== */
+@media screen and (max-width: 380px) {
+  :root {
+    --title-size: 1.8rem;
+    --hotspot-size: 35px;
+    --narrator-sprite-width: 90px;
+    --villain-width: 250px;
+  }
+
+  .narrator-overlay {
+    flex-direction: column;
+    align-items: center;
+    bottom: 10px;
+  }
+
+  .dialog-box {
+    width: 100%;
+    min-height: 70px;
+  }
+
+  #narrator-text {
+    font-size: 0.85rem;
+  }
+
+  .hotspot-label {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    max-width: 150px;
+  }
+
+  .level-card img {
+    height: 120px;
+  }
+}
+
+/* ===== ORIENTAÇÃO PAISAGEM EM MOBILE ===== */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .narrator-overlay {
+    bottom: 5px;
+    width: 70%;
+  }
+
+  .narrator-sprite {
+    width: 80px;
+  }
+
+  .dialog-box {
+    min-height: 60px;
+    padding: 10px;
+  }
+
+  #narrator-text {
+    font-size: 0.85rem;
+  }
+
+  #villain-sprite {
+    width: 300px;
+  }
+
+  .glass-panel {
+    padding: 1rem;
+  }
+
+  #cards-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .level-card img {
+    height: 100px;
+  }
+}
+
+/* ===== UTILITÁRIOS ===== */
+.hidden {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ===== TOUCH DEVICES ===== */
+@media (hover: none) and (pointer: coarse) {
+  .hotspot-button {
+    width: calc(var(--hotspot-size) * 1.2);
+    height: calc(var(--hotspot-size) * 1.2);
+  }
+
+  .cta-button:hover {
+    transform: none;
+  }
+
+  .level-card:hover {
+    transform: none;
+  }
+
+  .hotspot:hover .hotspot-button {
+    background: var(--glass-bg);
+    color: var(--text-color);
+    transform: translate(-50%, -50%);
+  }
+
+  .hotspot:active .hotspot-button {
+    background: var(--primary-color);
+    color: #000;
+    transform: translate(-50%, -50%) scale(1.1);
   }
 }
