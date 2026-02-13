@@ -27,6 +27,14 @@ class ThreeSixtyView {
 
     this.hotspots = []; // Array para guardar { element, vector } igual ao original
 
+    // Referências para elementos de efeito
+    this.redAlertDiv = null;
+    this.glitchDiv = null;      // <-- USAR GLITCH EM VEZ DE STATIC
+    this.smokeDiv = null;
+
+    // Carrega a imagem do glitch do theme assets
+    this.glitchImage = null;    // Será setado depois pelo GameEngine
+
     this.initInput();
     this.animate();
   }
@@ -183,4 +191,381 @@ class ThreeSixtyView {
       () => (this.isUserInteracting = false),
     );
   }
+
+  // Receber a imagem do glitch do config
+  setGlitchImage(src) {
+    this.glitchImage = src;
+  }
+
+  // ========== EFEITOS VISUAIS COM GLITCH ==========
+
+  startRedAlert() {
+    // 1. PRIMEIRO: Remove se já existir
+    this.stopRedAlert();
+    
+    // 2. DEPOIS: Cria novo
+    this.redAlertDiv = document.createElement('div');
+    this.redAlertDiv.id = 'red-alert-overlay'; // Adiciona ID para CSS
+    this.redAlertDiv.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 0, 0, 0.2);
+      pointer-events: none;
+      z-index: 14;
+      animation: pulseRed 0.5s infinite alternate;
+    `;
+    document.body.appendChild(this.redAlertDiv);
+    
+    if (!document.querySelector('#red-alert-style')) {
+      const style = document.createElement('style');
+      style.id = 'red-alert-style';
+      style.textContent = `
+        @keyframes pulseRed {
+          from { background-color: rgba(255, 0, 0, 0.1); }
+          to { background-color: rgba(255, 0, 0, 0.4); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  stopRedAlert() {
+    if (this.redAlertDiv) {
+      this.redAlertDiv.remove();
+      this.redAlertDiv = null;
+    }
+  }
+
+  // EFEITO GLITCH USANDO O ASSET DO CONFIG
+  showGlitchEffect() {
+    // Remove glitch existente
+    this.hideGlitchEffect();
+    
+    // Container principal
+    this.glitchDiv = document.createElement('div');
+    this.glitchDiv.id = 'glitch-effect-overlay';
+    this.glitchDiv.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 16;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    `;
+  
+    // Cores reduzidas: preto, branco, ciano, verde, vermelho
+    const colors = [
+      { bg: 'rgba(0, 0, 0, 0.9)', shadow: 'black' },
+      { bg: 'rgba(255, 255, 255, 0.95)', shadow: 'cyan' },
+      { bg: 'rgba(0, 255, 255, 0.7)', shadow: 'cyan' },
+      { bg: 'rgba(0, 255, 0, 0.7)', shadow: 'lime' },
+      { bg: 'rgba(255, 0, 0, 0.8)', shadow: 'red' }
+    ];
+
+    // Função para criar linhas - ESQUERDA, DIREITA e CENTRO
+    const createLines = (count, positionType) => {
+      for (let i = 0; i < count; i++) {
+        const line = document.createElement('div');
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const height = Math.random() < 0.7 ? 1 : Math.floor(Math.random() * 3) + 2;
+        
+        // LARGURA VARIÁVEL - NUNCA 100%
+        let width, left, right;
+        
+        switch(positionType) {
+          case 'left':
+            width = Math.floor(Math.random() * 60) + 20;
+            left = '0';
+            right = 'auto';
+            break;
+          case 'right':
+            width = Math.floor(Math.random() * 60) + 20;
+            right = '0';
+            left = 'auto';
+            break;
+          case 'center':
+            width = Math.floor(Math.random() * 70) + 20;
+            left = Math.floor(Math.random() * (80 - width)) + 10 + '%';
+            right = 'auto';
+            break;
+        }
+        
+        line.style.cssText = `
+          position: absolute;
+          top: ${Math.floor(Math.random() * 100)}%;
+          height: ${height}px;
+          width: ${width}%;
+          left: ${left || 'auto'};
+          right: ${right || 'auto'};
+          background-color: ${color.bg};
+          box-shadow: 0 0 ${height * 3}px ${color.shadow};
+          opacity: ${Math.random() * 0.5 + 0.3};
+          animation: glitchOptimized ${Math.random() * 0.15 + 0.03}s infinite alternate;
+        `;
+        
+        this.glitchDiv.appendChild(line);
+      }
+    };
+
+    // Distribuição balanceada
+    createLines(40, 'left');
+    createLines(40, 'right');
+    createLines(30, 'center');
+    
+    // Append ANTES do fade in =====
+    document.body.appendChild(this.glitchDiv);
+    
+    // Força reflow e aplica fade in
+    setTimeout(() => {
+      this.glitchDiv.style.opacity = '1';
+    }, 10);
+    
+    // CSS simplificado com uma única animação
+    if (!document.querySelector('#glitch-optimized-style')) {
+      const style = document.createElement('style');
+      style.id = 'glitch-optimized-style';
+      style.textContent = `
+        @keyframes glitchOptimized {
+          0% { opacity: 0.1; transform: translateX(0); }
+          25% { opacity: 0.9; transform: translateX(-2px); }
+          50% { opacity: 0.4; transform: translateX(2px); }
+          75% { opacity: 0.8; transform: translateX(-1px); }
+          100% { opacity: 0.2; transform: translateX(0); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  hideGlitchEffect() {
+    if (this.glitchDiv) {
+      // Fade out suave
+      this.glitchDiv.style.transition = 'opacity 0.6s ease';
+      this.glitchDiv.style.opacity = '0';
+      
+      setTimeout(() => {
+        if (this.glitchDiv) {
+          this.glitchDiv.remove();
+          this.glitchDiv = null;
+        }
+      }, 600);
+      // 
+    }
+  }
+  
+  // Mantém showStaticEffect como alias para compatibilidade
+  showStaticEffect() {
+    this.showGlitchEffect();
+  }
+  
+  hideStaticEffect() {
+    this.hideGlitchEffect();
+  }
+  //EFEITO DE FUMAÇA
+  showSmokeEffect() {
+    // Remove se já existir
+    this.hideSmokeEffect();
+    
+    console.log("💨🔥 Ativando EFEITO DE FUMAÇA INTENSO na CPU");
+    
+    // Container principal da fumaça
+    this.smokeDiv = document.createElement('div');
+    this.smokeDiv.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 16; /* MAIOR que a luz vermelha (z-index:14) */
+      overflow: hidden;
+    `;
+    
+    // ===== 1. CAMADA BASE - FUMAÇA DENSA =====
+    const baseSmoke = document.createElement('div');
+    baseSmoke.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 40%, 
+        rgba(255, 80, 0, 0.7) 0%, 
+        rgba(200, 50, 0, 0.6) 20%, 
+        rgba(100, 30, 0, 0.5) 40%,
+        rgba(50, 20, 0, 0.4) 60%,
+        rgba(0, 0, 0, 0.3) 100%);
+      mix-blend-mode: screen;
+      animation: smokeDensity 4s infinite alternate;
+    `;
+    this.smokeDiv.appendChild(baseSmoke);
+    
+    // ===== 2. CAMADA DE PARTÍCULAS - FUMAÇA EM MOVIMENTO =====
+    for (let i = 0; i < 40; i++) {
+      const particle = document.createElement('div');
+      const size = Math.floor(Math.random() * 300) + 100;
+      const posX = Math.floor(Math.random() * 120) - 10;
+      const posY = Math.floor(Math.random() * 120) - 10;
+      const delay = Math.random() * 5;
+      const duration = Math.random() * 8 + 6;
+      
+      particle.style.cssText = `
+        position: absolute;
+        top: ${posY}%;
+        left: ${posX}%;
+        width: ${size}px;
+        height: ${size}px;
+        background: radial-gradient(circle at center, 
+          rgba(255, 120, 0, 0.5) 0%, 
+          rgba(200, 70, 0, 0.4) 30%, 
+          rgba(150, 40, 0, 0.3) 50%,
+          transparent 80%);
+        border-radius: 50%;
+        filter: blur(${Math.random() * 15 + 10}px);
+        animation: smokeRise ${duration}s infinite alternate;
+        animation-delay: -${delay}s;
+        mix-blend-mode: screen;
+        box-shadow: 0 0 30px rgba(255, 100, 0, 0.5);
+      `;
+      
+      this.smokeDiv.appendChild(particle);
+    }
+    
+    // ===== 3. CAMADA DE FAÍSCAS - EFEITO DE CURTO-CIRCUITO =====
+    for (let i = 0; i < 20; i++) {
+      const spark = document.createElement('div');
+      const size = Math.floor(Math.random() * 8) + 3;
+      const posX = Math.floor(Math.random() * 100);
+      const posY = Math.floor(Math.random() * 100);
+      
+      spark.style.cssText = `
+        position: absolute;
+        top: ${posY}%;
+        left: ${posX}%;
+        width: ${size}px;
+        height: ${size}px;
+        background: rgba(255, 200, 100, 0.9);
+        border-radius: 50%;
+        filter: blur(2px);
+        box-shadow: 0 0 20px rgba(255, 150, 0, 0.8);
+        animation: sparkFlicker ${Math.random() * 0.3 + 0.1}s infinite alternate;
+        mix-blend-mode: screen;
+      `;
+      
+      this.smokeDiv.appendChild(spark);
+    }
+    
+    document.body.appendChild(this.smokeDiv);
+    
+    // CSS das animações
+    if (!document.querySelector('#smoke-intense-style')) {
+      const style = document.createElement('style');
+      style.id = 'smoke-intense-style';
+      style.textContent = `
+        @keyframes smokeDensity {
+          0% { opacity: 0.7; transform: scale(1); }
+          50% { opacity: 0.9; transform: scale(1.1); }
+          100% { opacity: 0.7; transform: scale(1); }
+        }
+        
+        @keyframes smokeRise {
+          0% { 
+            transform: translate(0, 0) scale(1); 
+            opacity: 0.4;
+          }
+          50% { 
+            transform: translate(-20px, -40px) scale(1.3); 
+            opacity: 0.7;
+          }
+          100% { 
+            transform: translate(-40px, -80px) scale(1.6); 
+            opacity: 0.2;
+          }
+        }
+        
+        @keyframes sparkFlicker {
+          0% { opacity: 0; transform: scale(0.5); }
+          50% { opacity: 1; transform: scale(1.2); }
+          100% { opacity: 0; transform: scale(0.5); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  hideSmokeEffect() {
+    if (this.smokeDiv) {
+      this.smokeDiv.remove();
+      this.smokeDiv = null;
+      console.log("💨 Efeito de fumaça removido");
+    }
+  }
+
+  // Efeito de luz serena (vitória)
+  startVictoryGlow() {
+    this.stopVictoryGlow();
+    
+    // Overlay de luz serena
+    this.victoryGlowDiv = document.createElement('div');
+    this.victoryGlowDiv.style.position = 'fixed';
+    this.victoryGlowDiv.style.top = '0';
+    this.victoryGlowDiv.style.left = '0';
+    this.victoryGlowDiv.style.width = '100%';
+    this.victoryGlowDiv.style.height = '100%';
+    this.victoryGlowDiv.style.background = 'radial-gradient(circle at center, rgba(0, 255, 255, 0.3) 0%, rgba(0, 100, 255, 0.2) 50%, transparent 100%)';
+    this.victoryGlowDiv.style.pointerEvents = 'none';
+    this.victoryGlowDiv.style.zIndex = '14';
+    this.victoryGlowDiv.style.animation = 'victoryPulse 2s infinite ease-in-out';
+    this.victoryGlowDiv.style.mixBlendMode = 'screen';
+    document.body.appendChild(this.victoryGlowDiv);
+    
+    // Adiciona brilho sereno na imagem do vilão (derrotado)
+    const villainSprite = document.getElementById('villain-sprite');
+    if (villainSprite) {
+      villainSprite.style.animation = 'villainDefeated 3s infinite ease-in-out';
+      villainSprite.style.filter = 'drop-shadow(0 0 40px #00ffff) grayscale(50%)';
+    }
+    
+    if (!document.querySelector('#victory-glow-style')) {
+      const style = document.createElement('style');
+      style.id = 'victory-glow-style';
+      style.textContent = `
+        @keyframes victoryPulse {
+          0% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(1.05); }
+          100% { opacity: 0.2; transform: scale(1); }
+        }
+        
+        @keyframes villainDefeated {
+          0% { transform: translateY(0px) scale(0.95); opacity: 0.8; }
+          50% { transform: translateY(-10px) scale(1); opacity: 1; }
+          100% { transform: translateY(0px) scale(0.95); opacity: 0.8; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  stopVictoryGlow() {
+    if (this.victoryGlowDiv) {
+      this.victoryGlowDiv.remove();
+      this.victoryGlowDiv = null;
+    }
+    
+    // Restaura animação normal do vilão
+    const villainSprite = document.getElementById('villain-sprite');
+    if (villainSprite) {
+      villainSprite.style.animation = 'villainFloat 3s infinite ease-in-out';
+      villainSprite.style.filter = 'drop-shadow(0 0 30px #ff0000)';
+      villainSprite.style.opacity = '1';
+    }
+  }
 }
+
