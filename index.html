@@ -72,6 +72,44 @@
       <div id="scene-container">
         <canvas id="three-canvas"></canvas>
         <div id="hotspots-layer"></div>
+        <div
+          id="villain-container"
+          style="
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            pointer-events: none;
+          "
+        >
+          <img
+            id="villain-sprite"
+            src="assets/images/glitch.png"
+            alt="GLITCH"
+            style="
+              width: 450px;
+              filter: drop-shadow(0 0 30px #ff0000);
+              animation: villainFloat 3s infinite ease-in-out;
+              transition: all 0.3s ease;
+            "
+          />
+        </div>
+
+        <style>
+          @keyframes villainFloat {
+            0% {
+              transform: translateY(0px) scale(1);
+            }
+            50% {
+              transform: translateY(-20px) scale(1.05);
+            }
+            100% {
+              transform: translateY(0px) scale(1);
+            }
+          }
+        </style>
       </div>
     </div>
 
@@ -83,6 +121,8 @@
     <script src="engine/ThreeSixtyView.js"></script>
     <script src="engine/HotspotController.js"></script>
     <script src="engine/UIController.js"></script>
+    <script src="engine/EventController.js"></script>
+    <!-- NOVO: ADICIONE AQUI! -->
     <script src="main.js"></script>
   </body>
 </html>
