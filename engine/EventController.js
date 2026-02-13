@@ -64,7 +64,7 @@ class EventController {
     if (scene.id === "sala_informatica") {
       this.game.view360.showGlitchEffect();
     } else if (scene.id === "cpu_interno") {
-      this.game.view360.showSmokeEffect();
+      this.game.view360.showGlitchEffect();
     }
     
     // 4. GLITCH FALA (imagem do vilão)
@@ -82,7 +82,7 @@ class EventController {
             if (scene.id === "sala_informatica") {
               this.game.view360.hideGlitchEffect();
             } else {
-              this.game.view360.hideSmokeEffect();
+              this.game.view360.hideGlitchEffect();
             }
             
             // 6. ABRIR O QUIZ
@@ -110,13 +110,13 @@ class EventController {
     
     setTimeout(() => {
       
-      // ===== 2. EFEITO GLITCH/FUMAÇA (FADE IN) =====
+      // ===== 2. EFEITO GLITCH (FADE IN) =====
       if (scene.id === "sala_informatica") {
         console.log("🎮 Ativando efeito glitch na Sala de Informática");
         this.game.view360.showGlitchEffect();
       } else if (scene.id === "cpu_interno") {
-        console.log("🎮 Ativando efeito de fumaça na CPU");
-        this.game.view360.showSmokeEffect();
+        console.log("🎮 Ativando efeito glitch na CPU");
+        this.game.view360.showGlitchEffect();
       }
       
       setTimeout(() => {
@@ -142,7 +142,7 @@ class EventController {
                   if (scene.id === "sala_informatica") {
                     this.game.view360.hideGlitchEffect();
                   } else if (scene.id === "cpu_interno") {
-                    this.game.view360.hideSmokeEffect();
+                    this.game.view360.hideGlitchEffect();
                   }
                   
                   // ===== 7. GLITCH DESAPARECE (FADE OUT) =====

@@ -243,7 +243,7 @@ class UIController {
             setTimeout(() => {
               onAnswer(true);
               this.els.quizOverlay.style.display = "none";
-            }, 2000);
+            }, 2000); // Fecha o quiz após resposta correta
           } else {
             btn.classList.add("wrong");
             feedElement.textContent = q.feedback_wrong;
