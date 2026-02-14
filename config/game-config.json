@@ -20,9 +20,9 @@
       "--font-body": "'Inter', sans-serif"
     },
     "assets": {
-      "narrator_image": "assets/images/byte.png",
+      "narrator_image": "assets/images/byte-drone.png",
       "glitch_effect": "assets/images/glitch-overlay.png",
-      "villain_image": "assets/images/glitch.png",
+      "villain_image": "assets/images/glitch-sprite.png",
       "villain_name": "GLITCH"
     }
   },

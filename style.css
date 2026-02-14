@@ -213,10 +213,16 @@ h2 {
 }
 
 .narrator-sprite {
-  width: var(--narrator-sprite-width);
-  filter: drop-shadow(0 0 10px var(--accent-color));
+  width: 120px;
+  height: 120px;
+  background-image: url('assets/images/byte-drone.jpg');
+  background-repeat: no-repeat;
+  background-size: 600% 300%;
+  background-position: 0% 0%;
+  filter: drop-shadow(0 0 15px var(--accent-color));
   flex-shrink: 0;
-  transition: width 0.3s ease;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
 }
 
 .dialog-box {
@@ -244,6 +250,7 @@ h2 {
   line-height: 1.4;
   padding-right: 30px;
 }
+
 
 .next-btn {
   position: absolute;
@@ -511,11 +518,15 @@ h2 {
 }
 
 #villain-sprite {
-  width: var(--villain-width);
-  filter: drop-shadow(0 0 30px rgba(255, 0, 0, 0.6)) blur(0.8px);
-  animation: villainFloatImponent 4s infinite ease-in-out;
+  width: 500px;
+  height: 500px;
+  background-image: url('assets/images/glitch-sprite.png');
+  background-repeat: no-repeat;
+  background-size: 600% 300%;
+  background-position: 0% 0%;
+  filter: drop-shadow(0 0 40px #FF0000);
   opacity: 0.9;
-  transition: all 0.5s ease;
+  transition: transform 0.3s ease;
 }
 
 /* ===== KEYFRAMES ===== */
@@ -779,7 +790,7 @@ input[type=range]::-webkit-slider-thumb {
     --border-radius: 16px;
     --hotspot-size: 45px;
     --narrator-width: 90%;
-    --narrator-sprite-width: 160px;
+    --narrator-sprite-width: 150px;
     --villain-width: 450px;
     --card-width: 300px;
   }
@@ -824,6 +835,11 @@ input[type=range]::-webkit-slider-thumb {
   #villain-container,
   #villain-container.visible {
     transform: translate(-50%, -50%) scale(1);
+  }
+
+  #villain-sprite {
+    width: 250px;
+    height: 250px;
   }
 
   #global-controls {
@@ -927,7 +943,8 @@ input[type=range]::-webkit-slider-thumb {
   }
 
   .narrator-sprite {
-    width: 80px;
+    width: 90px;
+    height: 90px;
   }
 
   .dialog-box {

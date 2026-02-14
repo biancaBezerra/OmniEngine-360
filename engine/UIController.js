@@ -5,7 +5,7 @@ class UIController {
       title: document.getElementById("game-title"),
       narratorArea: document.getElementById("narrator-area"),
       narratorText: document.getElementById("narrator-text"),
-      narratorImg: document.getElementById("narrator-img"),
+      narratorSprite: document.getElementById("narrator-sprite"),
       narratorName: document.getElementById("narrator-name"),
       levelSelect: document.getElementById("level-select"),
       cardsContainer: document.getElementById("cards-container"),
@@ -23,7 +23,8 @@ class UIController {
       btnCloseTutorial: document.getElementById("btn-close-tutorial"),
     };
     this.typingInterval = null;
-    this.pendingCallback = null; // Guarda a ação para executar ao fechar o diálogo
+    this.talkingInterval = null;
+    this.pendingCallback = null;
   }
 
   // Agora o init recebe também o onHomeClick
@@ -31,7 +32,6 @@ class UIController {
     this.config = config;
     this.els.title.textContent = config.meta.title;
     this.els.narratorName.textContent = config.narrator.name;
-    this.els.narratorImg.src = config.theme.assets.narrator_image;
 
     // Configuração do B.Y.T.E.
     this.defaultNarrator = {
@@ -149,28 +149,30 @@ class UIController {
   // Alterna entre o narrador do vilão e do B.Y.T.E. com base no tipor de fala
   setNarrator(type) {
     if (type === "villain") {
-      // VILÃO: NÃO mostra imagem, mostra apenas nome
-      this.els.narratorName.textContent = this.villainNarrator.name; // "GLITCH"
+      this.els.narratorName.textContent = this.villainNarrator.name;
 
-      // CRÍTICO: Esconde a imagem do vilão na caixa de diálogo
-      this.els.narratorImg.style.display = "none";
+      // --- MUDANÇA AQUI: ESCONDE O SPRITE PEQUENO ---
+      // Como o vilão está gigante no meio da tela, não mostramos ele embaixo.
+      this.els.narratorSprite.style.display = "none";
 
-      // Opcional: Ajusta o layout da caixa de diálogo quando não tem imagem
+      // Centraliza o texto já que não tem imagem
       this.els.narratorArea.style.justifyContent = "center";
     } else {
-      // B.Y.T.E.: Mostra imagem normalmente
-      this.els.narratorName.textContent = this.defaultNarrator.name; // "B.Y.T.E."
-      this.els.narratorImg.src = this.defaultNarrator.image;
-      this.els.narratorImg.style.display = "block"; // Mostra a imagem
+      // Configuração do B.Y.T.E. (Esse continua aparecendo embaixo)
+      this.els.narratorName.textContent = this.defaultNarrator.name;
+
+      this.els.narratorSprite.style.display = "block";
+      this.els.narratorSprite.style.backgroundImage = `url('${this.defaultNarrator.image}')`;
       this.els.narratorArea.style.justifyContent = "flex-start";
+
+      this.stopTalkingAnimation();
     }
   }
 
   // Método para garantir que a imagem do B.Y.T.E. seja restaurada
   showNarrator(text, callback, speaker = "byte") {
-    // Sempre mostra a imagem do B.Y.T.E. como padrão
     if (speaker === "byte") {
-      this.els.narratorImg.style.display = "block";
+      this.els.narratorSprite.style.display = "block";
       this.els.narratorArea.style.justifyContent = "flex-start";
     }
 
@@ -178,6 +180,11 @@ class UIController {
     this.pendingCallback = callback;
     this.els.narratorArea.style.display = "flex";
     this.els.narratorText.textContent = "";
+
+    // 1. INICIA A ANIMAÇÃO (Se for o B.Y.T.E.)
+    if (speaker === "byte") {
+      this.startTalkingAnimation();
+    }
 
     let i = 0;
     if (this.typingInterval) clearInterval(this.typingInterval);
@@ -187,8 +194,57 @@ class UIController {
       i++;
       if (i >= text.length) {
         clearInterval(this.typingInterval);
+
+        // 2. PARA A ANIMAÇÃO (Texto acabou)
+        if (speaker === "byte") {
+          this.stopTalkingAnimation();
+        }
       }
     }, this.config.narrator.typing_speed);
+  }
+
+  startTalkingAnimation() {
+    if (this.talkingInterval) clearInterval(this.talkingInterval);
+
+    let currentFrame = 0; // Começa do quadro 0
+
+    // Velocidade: 80ms (aprox 12 FPS) para ficar fluido
+    this.talkingInterval = setInterval(() => {
+      // 1. Calcula Coluna e Linha sequencialmente
+      // 6 colunas (0-5)
+      const col = currentFrame % 6;
+
+      // 3 linhas (0-2) -> Divide por 6 e arredonda para baixo
+      const row = Math.floor(currentFrame / 6);
+
+      // 2. Chama a função que aplica o CSS
+      this.setSpriteFrame(col, row);
+
+      // 3. Avança para o próximo quadro
+      currentFrame++;
+
+      // 4. Se chegou no final (18 quadros), volta para o zero
+      if (currentFrame >= 18) {
+        currentFrame = 0;
+      }
+    }, 80);
+  }
+
+  stopTalkingAnimation() {
+    if (this.talkingInterval) clearInterval(this.talkingInterval);
+    // Volta para o quadro neutro (0,0) quando para de falar
+    this.setSpriteFrame(0, 0);
+  }
+
+  setSpriteFrame(col, row) {
+    const x = col * 20; // 0%, 20%, 40%, 60%, 80%, 100%
+
+    // Ajuste padrão: 50% para 3 linhas (0%, 50%, 100%)
+    const y = row * 50.5;
+
+    if (this.els.narratorSprite) {
+      this.els.narratorSprite.style.backgroundPosition = `${x}% ${y}%`;
+    }
   }
 
   renderLevelSelect(cards, backgroundSrc, onSelect) {
