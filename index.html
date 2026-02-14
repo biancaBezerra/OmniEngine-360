@@ -26,6 +26,54 @@
   <body>
     <div id="app">
       <div id="dynamic-background"></div>
+
+      <div id="global-controls">
+        <button id="btn-info" class="icon-btn" title="Como Jogar">
+          <i class="fas fa-question"></i>
+        </button>
+
+        <div class="audio-wrapper">
+          <button id="btn-audio" class="icon-btn" title="Áudio">
+            <i class="fas fa-volume-up"></i>
+          </button>
+          <div class="volume-slider-box">
+            <input
+              type="range"
+              id="volume-slider"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.5"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="tutorial-overlay"
+        class="modal-overlay"
+        style="display: none; z-index: 9999"
+      >
+        <div class="glass-panel tutorial-panel">
+          <h2>COMO JOGAR</h2>
+          <div class="tutorial-steps">
+            <div class="step">
+              <i class="fas fa-vr-cardboard"></i>
+              <p>Arraste a tela para olhar em 360º.</p>
+            </div>
+            <div class="step">
+              <i class="fas fa-search"></i>
+              <p>Clique nos ícones para investigar.</p>
+            </div>
+            <div class="step">
+              <i class="fas fa-robot"></i>
+              <p>Responda o Quiz para vencer o GLITCH!</p>
+            </div>
+          </div>
+          <button id="btn-close-tutorial" class="cta-button">ENTENDI</button>
+        </div>
+      </div>
+
       <div id="start-screen" class="screen active">
         <div class="glass-panel center-content">
           <h1 id="game-title">Loading...</h1>
