@@ -37,8 +37,8 @@
   "narrator": {
     "name": "B.Y.T.E.",
     "typing_speed": 30,
-    "intro_text": "Alerta de Sistema! Alerta... Ah, finalmente! Um humano detectado! Saudações. Eu sou o B.Y.T.E., a tua Base de Y-Transferência Educacional. O Grande Servidor do Conhecimento sofreu um apagão crítico. A ligação entre o nosso passado histórico e o nosso hardware foi corrompida! Preciso da tua ajuda para reiniciar o sistema de forma segura. Aceitas a missão na Operação Reboot?",
-    "after_accept_text": "Excelente! Temos dois setores em estado crítico a necessitar de reparação. À esquerda, a Sala de Informática, onde guardamos a nossa memória histórica. À direita, o Núcleo do CPU, o coração físico da máquina. Qual destes módulos vamos restaurar primeiro?"
+    "intro_text": "Saudações! Eu sou o B.Y.T.E., o teu assistente de diagnóstico. O Grande Servidor do Conhecimento sofreu um apagão crítico. A ligação entre o nosso passado histórico e o nosso hardware foi corrompida! Preciso da tua ajuda para reiniciar o sistema de forma segura. Aceitas a missão na Operação Reboot?",
+    "after_accept_text": "Excelente! Temos dois setores em estado crítico a necessitar de reparação. À esquerda, a Sala de Informática, onde guardamos a nossa memória histórica. À direita, o Núcleo do CPU, o coração físico da máquina. Qual destes módulos desejas restaurar?"
   },
   "scenes": [
     {
