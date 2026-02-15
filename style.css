@@ -31,6 +31,7 @@
   --z-effects: 14;
   --z-villain: 100;
   --z-ui: 50;
+  --z-mission-tracker: 51;
   --z-narrator: 10002;
   --z-modal: 10000;
   --z-tutorial: 10001;
@@ -274,10 +275,16 @@ h3 {
   left: 50%;
   transform: translateX(-50%);
   margin-top: 120px;
+  z-index: var(--z-mission-tracker);
 }
 
 /* Esconder tracker quando os cards estão ativos */
 #game-ui.cards-active #mission-tracker {
+  display: none !important;
+}
+
+/* Quando o quiz estiver ativo, esconde o mission-tracker completamente */
+body.quiz-active #mission-tracker {
   display: none !important;
 }
 
@@ -662,29 +669,32 @@ body.at-start #btn-home {
   border-radius: 20px;
   display: flex;
   align-items: center;
+  height: 8px;
 }
 
 .audio-wrapper:hover .volume-slider-box {
   width: 80px;
   padding: 0 8px;
   margin-left: 8px;
-  border: 1px solid var(--primary-color);
-}
-
-/* Para mobile, sempre mostrar o slider */
-@media (hover: none) and (pointer: coarse) {
-  .volume-slider-box {
-    width: 80px;
-    padding: 0 8px;
-    margin-left: 8px;
-    border: 1px solid var(--primary-color);
-  }
+  border: 1px solid var(--accent-color);
+  height: 10px;
 }
 
 #volume-slider {
   width: 100%;
   cursor: pointer;
   height: 4px;
+}
+
+/* Para mobile, sempre mostrar o slider */
+@media (hover: none) and (pointer: coarse) {
+  .volume-slider-box {
+    width: 70px;
+    padding: 0 8px;
+    margin-left: 8px;
+    border: 1px solid var(--accent-color);
+    height: 10px;
+  }
 }
 
 /* ===== MATRIX BACKGROUND ===== */
@@ -1145,10 +1155,20 @@ body.at-start #btn-home {
     font-size: 1.6rem;
   }
 
+  .icon-btn, #btn-home {
+    width: 55px;
+    height: 55px;
+    font-size: 1.2rem;
+  }
+
+  .audio-wrapper:hover .volume-slider-box {
+    height: 10px;
+  }
+
   #mission-tracker {
     padding: 8px 16px;
-    font-size: 0.9rem;
-    margin-top: 35px;
+    font-size: 1.2rem;
+    margin-top: 70px;
   }
 
   .narrator-overlay {
@@ -1159,6 +1179,10 @@ body.at-start #btn-home {
   .dialog-box {
     padding: 16px;
     min-height: 90px;
+  }
+
+  #narrator-name {
+    font-size: 1.3rem;
   }
 
   #narrator-text {
@@ -1255,8 +1279,8 @@ body.at-start #btn-home {
   }
 
   #villain-sprite {
-    width: 350px;
-    height: 350px;
+    width: 300px;
+    height: 300px;
   }
 
   .icon-btn,
@@ -1309,7 +1333,7 @@ body.at-start #btn-home {
   }
 
   #narrator-text {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
   }
 
   .hotspot-label {
@@ -1405,6 +1429,12 @@ body.at-start #btn-home {
     background: var(--primary-color);
     color: #000;
     transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .volume-slider-box {
+    height: 12px !important; /* Força altura em touch devices */
+    display: flex;
+    align-items: center;
   }
 }
 

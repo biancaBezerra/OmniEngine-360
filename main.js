@@ -661,7 +661,7 @@ class GameEngine {
         () => {
           if (isFullyExplored && eventNotTriggered && isFirstVisit) {
             this.ui.showNarrator(
-              "🎯 Protocolo de Verificação desbloqueado! Clique no ícone para iniciar.",
+              "📋 Protocolo de Verificação desbloqueado! Clique no ícone para iniciar.",
               null,
               "byte",
             );
