@@ -212,6 +212,31 @@ h3 {
   min-width: 160px;
 }
 
+.cta-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--primary-color);
+}
+
+/* Animação pulsar para botão iniciar sistema */
+@keyframes softPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 10px var(--primary-color);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px var(--primary-color), 0 0 40px var(--primary-color-two);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px var(--primary-color);
+  }
+}
+
+.cta-button.pulsing {
+  animation: softPulse 2s ease-in-out infinite;
+}
+
 /* ===== UI HUD ===== */
 .ui-top {
   position: fixed;
@@ -602,10 +627,10 @@ h3 {
 
 #btn-home:hover,
 .icon-btn:hover {
-  background: var(--primary-color-two);
-  color: #fff;
+  background: var(--accent-color);
+  color: #000;
   transform: scale(1.1);
-  box-shadow: 0 0 30px var(--primary-color);
+  box-shadow: 0 0 10px var(--glass-border);
 }
 
 /* Esconder home na tela inicial */
