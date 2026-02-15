@@ -755,14 +755,14 @@ body.at-start #btn-home {
   width: 100vw;
   height: 100vh;
   background: radial-gradient(circle at center, 
-    rgba(255, 255, 255, 0.8) 0%,
-    rgba(0, 160, 255, 0.5) 20%,
-    rgba(0, 100, 255, 0.3) 40%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(0, 255, 255, 0.4) 25%,
+    rgba(0, 200, 255, 0.2) 45%,
     transparent 70%
   );
   filter: blur(20px);
   opacity: 0;
-  animation: windowsFlash 1.8s ease-out forwards;
+  animation: windowsFlashAccent 1.8s ease-out forwards;
   pointer-events: none;
 }
 
@@ -775,7 +775,7 @@ body.at-start #btn-home {
   width: 60vw;
   height: 60vh;
   opacity: 0;
-  animation: crossReveal 1.8s ease-out forwards;
+  animation: crossRevealAccent 1.8s ease-out forwards;
   pointer-events: none;
 }
 
@@ -795,8 +795,8 @@ body.at-start #btn-home {
     rgba(255, 255, 255, 0) 80%,
     transparent 100%
   );
-  box-shadow: 0 0 30px rgba(0, 200, 255, 0.8);
-  animation: crossGlow 1.8s ease-out forwards;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+  animation: crossGlowAccent 1.8s ease-out forwards;
 }
 
 /* Linha vertical da cruz */
@@ -815,8 +815,8 @@ body.at-start #btn-home {
     rgba(255, 255, 255, 0) 80%,
     transparent 100%
   );
-  box-shadow: 0 0 30px rgba(0, 200, 255, 0.8);
-  animation: crossGlow 1.8s ease-out forwards;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+  animation: crossGlowAccent 1.8s ease-out forwards;
 }
 
 /* Efeito de scanlines para dar textura */
@@ -829,18 +829,18 @@ body.at-start #btn-home {
   background: repeating-linear-gradient(
     0deg,
     rgba(0, 0, 0, 0) 0px,
-    rgba(0, 255, 255, 0.03) 1px,
+    rgba(0, 255, 255, 0.02) 1px,
     rgba(0, 0, 0, 0) 2px,
-    rgba(0, 255, 255, 0.03) 3px,
+    rgba(0, 255, 255, 0.02) 3px,
     rgba(0, 0, 0, 0) 4px
   );
   pointer-events: none;
   opacity: 0;
-  animation: scanlinesFade 1.8s ease-out forwards;
+  animation: scanlinesFadeAccent 1.8s ease-out forwards;
   z-index: 2;
 }
 
-@keyframes windowsFlash {
+@keyframes windowsFlashAccent {
   0% {
     opacity: 0;
     filter: blur(40px);
@@ -856,8 +856,8 @@ body.at-start #btn-home {
     filter: blur(20px);
     background: radial-gradient(circle at center, 
       rgba(255, 255, 255, 1) 0%,
-      rgba(0, 200, 255, 0.8) 25%,
-      rgba(0, 150, 255, 0.5) 45%,
+      rgba(0, 255, 255, 0.6) 25%,
+      rgba(0, 200, 255, 0.3) 45%,
       transparent 75%
     );
   }
@@ -873,7 +873,7 @@ body.at-start #btn-home {
   }
 }
 
-@keyframes crossReveal {
+@keyframes crossRevealAccent {
   0% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.5);
@@ -899,34 +899,34 @@ body.at-start #btn-home {
   }
 }
 
-@keyframes crossGlow {
+@keyframes crossGlowAccent {
   0% {
     opacity: 0;
-    box-shadow: 0 0 0px rgba(0, 200, 255, 0);
+    box-shadow: 0 0 0px rgba(0, 255, 255, 0);
   }
   40% {
     opacity: 0.2;
-    box-shadow: 0 0 30px rgba(0, 200, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
   }
   60% {
     opacity: 1;
-    box-shadow: 0 0 60px rgba(0, 200, 255, 0.9), 0 0 100px rgba(0, 150, 255, 0.6);
+    box-shadow: 0 0 60px rgba(0, 255, 255, 0.7), 0 0 100px rgba(0, 200, 255, 0.4);
   }
   80% {
     opacity: 0.5;
-    box-shadow: 0 0 40px rgba(0, 200, 255, 0.5);
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.4);
   }
   100% {
     opacity: 0;
-    box-shadow: 0 0 0px rgba(0, 200, 255, 0);
+    box-shadow: 0 0 0px rgba(0, 255, 255, 0);
   }
 }
 
-@keyframes scanlinesFade {
+@keyframes scanlinesFadeAccent {
   0% { opacity: 0; }
   30% { opacity: 0; }
-  50% { opacity: 0.3; }
-  70% { opacity: 0.2; }
+  50% { opacity: 0.2; }
+  70% { opacity: 0.1; }
   100% { opacity: 0; }
 }
 
@@ -1053,10 +1053,10 @@ body.at-start #btn-home {
 
 /* Hover para ambos */
 .confirm-buttons .cta-button:hover {
-  background: var(--primary-color-two);
-  color: #fff;
+  background: var(--primary-color);
+  color: #000;
   transform: scale(1.05);
-  box-shadow: 0 0 10px var(--primary-color);
+  box-shadow: 0 0 20px var(--primary-color);
 }
 
 /* ===== TUTORIAL ===== */
