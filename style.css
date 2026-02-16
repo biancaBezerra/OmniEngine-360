@@ -171,7 +171,9 @@ body {
 }
 
 /* ===== TIPOGRAFIA RESPONSIVA ===== */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-header);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -224,10 +226,12 @@ h3 {
     transform: scale(1);
     box-shadow: 0 0 10px var(--primary-color);
   }
+
   50% {
     transform: scale(1.05);
     box-shadow: 0 0 25px var(--primary-color), 0 0 40px var(--primary-color-two);
   }
+
   100% {
     transform: scale(1);
     box-shadow: 0 0 10px var(--primary-color);
@@ -251,7 +255,7 @@ h3 {
   z-index: var(--z-home-button);
 }
 
-.ui-top > * {
+.ui-top>* {
   pointer-events: auto;
 }
 
@@ -308,7 +312,7 @@ body.quiz-active #mission-tracker {
   height: var(--narrator-sprite-width);
   background-image: url('assets/images/byte-drone.jpg');
   background-repeat: no-repeat;
-  background-size: 600% 300%;
+  background-size: 600% 307%;
   background-position: 0% 0%;
   filter: drop-shadow(0 0 15px var(--accent-color));
   flex-shrink: 0;
@@ -574,7 +578,7 @@ body.quiz-active #mission-tracker {
   pointer-events: none;
   opacity: 0;
   transition: opacity 1.4s cubic-bezier(0.23, 1, 0.32, 1),
-              transform 1.4s cubic-bezier(0.23, 1, 0.32, 1);
+    transform 1.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 #villain-container.visible {
@@ -585,9 +589,9 @@ body.quiz-active #mission-tracker {
 #villain-sprite {
   width: 300px;
   height: 300px;
-  background-image: url('assets/images/glitch-sprite.png');
+  background-image: url('assets/images/glitch-sprite2.png');
   background-repeat: no-repeat;
-  background-size: 600% 300%;
+  background-size: 605% 100%;
   background-position: 0% 0%;
   filter: drop-shadow(0 0 30px #FF0000);
   opacity: 0.9;
@@ -647,11 +651,13 @@ body.at-start #btn-home {
 
 /* Permitir cliques através do level-select apenas na área do botão */
 #level-select.active {
-  pointer-events: none; /* Desativa cliques em toda a tela */
+  pointer-events: none;
+  /* Desativa cliques em toda a tela */
 }
 
 #level-select.active .glass-panel {
-  pointer-events: auto; /* Reativa cliques APENAS nos cards */
+  pointer-events: auto;
+  /* Reativa cliques APENAS nos cards */
 }
 
 /* ===== VOLUME SLIDER ===== */
@@ -711,7 +717,7 @@ body.at-start #btn-home {
   transition: opacity 0.3s ease;
   font-family: 'Courier New', monospace;
   will-change: opacity;
-  backface-visibility: hidden; 
+  backface-visibility: hidden;
 }
 
 #matrix-bg.hidden-matrix {
@@ -734,10 +740,23 @@ body.at-start #btn-home {
 }
 
 @keyframes matrixFall {
-  0% { top: -100%; opacity: 0; }
-  10% { opacity: 0.6; }
-  90% { opacity: 0.6; }
-  100% { top: 100%; opacity: 0; }
+  0% {
+    top: -100%;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.6;
+  }
+
+  90% {
+    opacity: 0.6;
+  }
+
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
 }
 
 /* ===== BOOT ANIMATION - ESTILO WINDOWS FLASH ===== */
@@ -764,12 +783,11 @@ body.at-start #btn-home {
   transform: translate(-50%, -50%);
   width: 100vw;
   height: 100vh;
-  background: radial-gradient(circle at center, 
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(0, 255, 255, 0.4) 25%,
-    rgba(0, 200, 255, 0.2) 45%,
-    transparent 70%
-  );
+  background: radial-gradient(circle at center,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(0, 255, 255, 0.4) 25%,
+      rgba(0, 200, 255, 0.2) 45%,
+      transparent 70%);
   filter: blur(20px);
   opacity: 0;
   animation: windowsFlashAccent 1.8s ease-out forwards;
@@ -798,13 +816,12 @@ body.at-start #btn-home {
   transform: translateY(-50%);
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, 
-    transparent 0%,
-    rgba(255, 255, 255, 0) 20%,
-    rgba(255, 255, 255, 1) 50%,
-    rgba(255, 255, 255, 0) 80%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0) 20%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 0) 80%,
+      transparent 100%);
   box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
   animation: crossGlowAccent 1.8s ease-out forwards;
 }
@@ -818,13 +835,12 @@ body.at-start #btn-home {
   transform: translateX(-50%);
   width: 2px;
   height: 100%;
-  background: linear-gradient(180deg, 
-    transparent 0%,
-    rgba(255, 255, 255, 0) 20%,
-    rgba(255, 255, 255, 1) 50%,
-    rgba(255, 255, 255, 0) 80%,
-    transparent 100%
-  );
+  background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0) 20%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 0) 80%,
+      transparent 100%);
   box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
   animation: crossGlowAccent 1.8s ease-out forwards;
 }
@@ -836,14 +852,12 @@ body.at-start #btn-home {
   left: 0;
   width: 100%;
   height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0) 0px,
-    rgba(0, 255, 255, 0.02) 1px,
-    rgba(0, 0, 0, 0) 2px,
-    rgba(0, 255, 255, 0.02) 3px,
-    rgba(0, 0, 0, 0) 4px
-  );
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 255, 255, 0.02) 1px,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 255, 255, 0.02) 3px,
+      rgba(0, 0, 0, 0) 4px);
   pointer-events: none;
   opacity: 0;
   animation: scanlinesFadeAccent 1.8s ease-out forwards;
@@ -856,26 +870,29 @@ body.at-start #btn-home {
     filter: blur(40px);
     transform: translate(-50%, -50%) scale(0.8);
   }
+
   20% {
     opacity: 1;
     filter: blur(30px);
     transform: translate(-50%, -50%) scale(1);
   }
+
   50% {
     opacity: 0.9;
     filter: blur(20px);
-    background: radial-gradient(circle at center, 
-      rgba(255, 255, 255, 1) 0%,
-      rgba(0, 255, 255, 0.6) 25%,
-      rgba(0, 200, 255, 0.3) 45%,
-      transparent 75%
-    );
+    background: radial-gradient(circle at center,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(0, 255, 255, 0.6) 25%,
+        rgba(0, 200, 255, 0.3) 45%,
+        transparent 75%);
   }
+
   80% {
     opacity: 0.5;
     filter: blur(10px);
     transform: translate(-50%, -50%) scale(1.1);
   }
+
   100% {
     opacity: 0;
     filter: blur(0px);
@@ -888,21 +905,26 @@ body.at-start #btn-home {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.5);
   }
+
   30% {
     opacity: 0;
   }
+
   40% {
     opacity: 0.3;
     transform: translate(-50%, -50%) scale(0.8);
   }
+
   60% {
     opacity: 0.8;
     transform: translate(-50%, -50%) scale(1);
   }
+
   80% {
     opacity: 0.4;
     transform: translate(-50%, -50%) scale(1.2);
   }
+
   100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(1.5);
@@ -914,18 +936,22 @@ body.at-start #btn-home {
     opacity: 0;
     box-shadow: 0 0 0px rgba(0, 255, 255, 0);
   }
+
   40% {
     opacity: 0.2;
     box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
   }
+
   60% {
     opacity: 1;
     box-shadow: 0 0 60px rgba(0, 255, 255, 0.7), 0 0 100px rgba(0, 200, 255, 0.4);
   }
+
   80% {
     opacity: 0.5;
     box-shadow: 0 0 40px rgba(0, 255, 255, 0.4);
   }
+
   100% {
     opacity: 0;
     box-shadow: 0 0 0px rgba(0, 255, 255, 0);
@@ -933,11 +959,25 @@ body.at-start #btn-home {
 }
 
 @keyframes scanlinesFadeAccent {
-  0% { opacity: 0; }
-  30% { opacity: 0; }
-  50% { opacity: 0.2; }
-  70% { opacity: 0.1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
+
+  70% {
+    opacity: 0.1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 /* Mantenha o container do Byte e diálogo */
@@ -961,7 +1001,7 @@ body.at-start #btn-home {
   height: 200px;
   background-image: url('assets/images/byte-drone.png');
   background-repeat: no-repeat;
-  background-size: 600% 300%;
+  background-size: 600% 307%;
   background-position: 0% 0%;
   filter: drop-shadow(0 0 20px var(--accent-color));
   transition: background-position 0.05s steps(1);
@@ -970,23 +1010,26 @@ body.at-start #btn-home {
 }
 
 @keyframes byteFadeIn {
-  0% { 
-    opacity: 0; 
+  0% {
+    opacity: 0;
     transform: scale(0.8);
     filter: drop-shadow(0 0 0px var(--accent-color));
   }
-  15% { 
-    opacity: 0.5; 
+
+  15% {
+    opacity: 0.5;
     transform: scale(0.9);
     filter: drop-shadow(0 0 15px var(--accent-color));
   }
-  30% { 
-    opacity: 1; 
+
+  30% {
+    opacity: 1;
     transform: scale(1);
     filter: drop-shadow(0 0 35px var(--accent-color));
   }
-  100% { 
-    opacity: 1; 
+
+  100% {
+    opacity: 1;
     transform: scale(1);
     filter: drop-shadow(0 0 20px var(--accent-color));
   }
@@ -997,10 +1040,22 @@ body.at-start #btn-home {
 }
 
 @keyframes bytePulse {
-  0% { transform: scale(1); filter: drop-shadow(0 0 15px var(--accent-color)); }
-  50% { transform: scale(1.03); filter: drop-shadow(0 0 35px var(--accent-color)); }
-  100% { transform: scale(1); filter: drop-shadow(0 0 15px var(--accent-color)); }
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 15px var(--accent-color));
+  }
+
+  50% {
+    transform: scale(1.03);
+    filter: drop-shadow(0 0 35px var(--accent-color));
+  }
+
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 15px var(--accent-color));
+  }
 }
+
 /* Para tablets */
 @media (min-width: 768px) {
   .boot-byte-sprite {
@@ -1120,13 +1175,148 @@ body.at-start #btn-home {
 
 /* ===== KEYFRAMES ===== */
 @keyframes blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 @keyframes pulseQuiz {
-  0% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.15); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ===== EFEITOS (Movido do JS para CSS) ===== */
+
+/* Red Alert */
+#red-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 14;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+#red-alert-overlay.active {
+  animation: pulseRed 0.5s infinite alternate;
+  opacity: 1;
+}
+
+@keyframes pulseRed {
+  from {
+    background-color: rgba(255, 0, 0, 0.1);
+  }
+
+  to {
+    background-color: rgba(255, 0, 0, 0.4);
+  }
+}
+
+/* Glitch Container */
+#glitch-effect-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 16;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+#glitch-effect-overlay.visible {
+  opacity: 1;
+}
+
+.glitch-line {
+  position: absolute;
+  animation: glitchOptimized 0.2s infinite alternate;
+}
+
+@keyframes glitchOptimized {
+  0% {
+    opacity: 0.1;
+    transform: translateX(0);
+  }
+
+  25% {
+    opacity: 0.9;
+    transform: translateX(-2px);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: translateX(2px);
+  }
+
+  75% {
+    opacity: 0.8;
+    transform: translateX(-1px);
+  }
+
+  100% {
+    opacity: 0.2;
+    transform: translateX(0);
+  }
+}
+
+/* Victory Glow */
+#victory-glow-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0, 255, 255, 0.3) 0%, rgba(0, 100, 255, 0.2) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 14;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+#victory-glow-overlay.active {
+  opacity: 1;
+  animation: victoryPulse 2s infinite ease-in-out;
+}
+
+@keyframes victoryPulse {
+  0% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+}
+
+/* Quiz Pulse */
+.hotspot-button.quiz-highlight {
+  animation: pulseQuiz 1.5s infinite;
+  box-shadow: 0 0 30px var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 /* ===== MEDIA QUERIES - MOBILE FIRST ===== */
@@ -1155,7 +1345,8 @@ body.at-start #btn-home {
     font-size: 1.6rem;
   }
 
-  .icon-btn, #btn-home {
+  .icon-btn,
+  #btn-home {
     width: 55px;
     height: 55px;
     font-size: 1.2rem;
@@ -1432,7 +1623,8 @@ body.at-start #btn-home {
   }
 
   .volume-slider-box {
-    height: 12px !important; /* Força altura em touch devices */
+    height: 12px !important;
+    /* Força altura em touch devices */
     display: flex;
     align-items: center;
   }
@@ -1488,6 +1680,7 @@ body.quiz-active .dialog-box {
 
 /* Para tablets/desktop, scroll mais fino */
 @media screen and (min-width: 768px) {
+
   .quiz-panel::-webkit-scrollbar,
   #quiz-options::-webkit-scrollbar,
   #cards-container::-webkit-scrollbar {
