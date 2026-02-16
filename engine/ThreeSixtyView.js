@@ -215,36 +215,14 @@ class ThreeSixtyView {
   // ========== EFEITOS VISUAIS COM GLITCH ==========
 
   startRedAlert() {
-    // 1. PRIMEIRO: Remove se já existir
     this.stopRedAlert();
 
-    // 2. DEPOIS: Cria novo
     this.redAlertDiv = document.createElement("div");
-    this.redAlertDiv.id = "red-alert-overlay"; // Adiciona ID para CSS
-    this.redAlertDiv.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 0, 0, 0.2);
-      pointer-events: none;
-      z-index: 14;
-      animation: pulseRed 0.5s infinite alternate;
-    `;
-    document.body.appendChild(this.redAlertDiv);
+    this.redAlertDiv.id = "red-alert-overlay";
 
-    if (!document.querySelector("#red-alert-style")) {
-      const style = document.createElement("style");
-      style.id = "red-alert-style";
-      style.textContent = `
-        @keyframes pulseRed {
-          from { background-color: rgba(255, 0, 0, 0.1); }
-          to { background-color: rgba(255, 0, 0, 0.4); }
-        }
-      `;
-      document.head.appendChild(style);
-    }
+    document.body.appendChild(this.redAlertDiv);
+    void this.redAlertDiv.offsetWidth;
+    this.redAlertDiv.classList.add("active");
   }
 
   stopRedAlert() {
@@ -411,25 +389,6 @@ class ThreeSixtyView {
       villainSprite.style.animation = "villainDefeated 3s infinite ease-in-out";
       villainSprite.style.filter =
         "drop-shadow(0 0 40px #00ffff) grayscale(50%)";
-    }
-
-    if (!document.querySelector("#victory-glow-style")) {
-      const style = document.createElement("style");
-      style.id = "victory-glow-style";
-      style.textContent = `
-        @keyframes victoryPulse {
-          0% { opacity: 0.2; transform: scale(1); }
-          50% { opacity: 0.7; transform: scale(1.05); }
-          100% { opacity: 0.2; transform: scale(1); }
-        }
-        
-        @keyframes villainDefeated {
-          0% { transform: translateY(0px) scale(0.95); opacity: 0.8; }
-          50% { transform: translateY(-10px) scale(1); opacity: 1; }
-          100% { transform: translateY(0px) scale(0.95); opacity: 0.8; }
-        }
-      `;
-      document.head.appendChild(style);
     }
   }
 

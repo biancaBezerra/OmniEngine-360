@@ -28,15 +28,13 @@
         "totalFrames": 18,
         "fps": 12
       },
-      "villain_image": "assets/images/glitch-sprite.png",
+      "villain_image": "assets/images/glitch-sprite2.png",
       "villain_sprite_config": {
         "cols": 6,
         "rows": 3,
         "totalFrames": 18,
-        "fps": 12
-      },
-      "glitch_effect": "assets/images/glitch-overlay.png",
-      "villain_name": "GLITCH"
+        "fps": 15
+      }
     }
   },
   "gameplay": {

@@ -105,18 +105,18 @@ class EventController {
             const hub = this.game.config.scenes.find((s) => s.type === "menu");
             if (hub) {
               this.game.loadMenuScene(hub);
-              
+
               // Toca a música do menu
               if (this.game.config.meta.menu_bgm) {
                 this.game.audio.playBGM(this.game.config.meta.menu_bgm);
               }
-              
+
               // Mostra o diálogo do B.Y.T.E. novamente
               setTimeout(() => {
                 this.game.ui.showNarrator(
                   this.game.config.narrator.after_accept_text,
                   null,
-                  "byte"
+                  "byte",
                 );
               }, 500);
             }
@@ -132,17 +132,32 @@ class EventController {
 
   showVillainSprite() {
     const villainContainer = document.getElementById("villain-container");
-    if (villainContainer) {
+    const villainSprite = document.getElementById("villain-sprite");
+
+    if (villainContainer && villainSprite) {
       villainContainer.style.display = "block";
-      void villainContainer.offsetWidth;
+      void villainContainer.offsetWidth; // Força reflow p/ transição CSS
       villainContainer.classList.add("visible");
-      this.startVillainAnimation();
+
+      // CRIA O ANIMATOR APENAS UMA VEZ OU RECICLA
+      if (!this.villainAnimator) {
+        // Usa a config do JSON
+        this.villainAnimator = new SpriteAnimator(
+          villainSprite,
+          this.game.config.theme.assets.villain_sprite_config,
+        );
+      }
+      this.villainAnimator.play();
     }
   }
 
   hideVillainSprite() {
     const villainContainer = document.getElementById("villain-container");
-    this.stopVillainAnimation();
+
+    // Para a animação usando a classe nova
+    if (this.villainAnimator) {
+      this.villainAnimator.stop();
+    }
 
     if (villainContainer) {
       villainContainer.classList.remove("visible");
@@ -152,67 +167,34 @@ class EventController {
     }
   }
 
-  // --- ANIMAÇÃO LINEAR (SEQUENCIAL) ---
+  // Estes métodos antigos podem ser removidos ou deixados vazios para não quebrar chamadas antigas
   startVillainAnimation() {
-    const spriteEl = document.getElementById("villain-sprite");
-    if (!spriteEl) return;
-
-    if (this.villainInterval) clearInterval(this.villainInterval);
-
-    let currentFrame = 0; // Começa do quadro 0
-
-    this.villainInterval = setInterval(() => {
-      // 1. Calcula Coluna e Linha sequencialmente
-      // Como a imagem tem 6 colunas, usamos o resto da divisão (%)
-      const col = currentFrame % 6;
-
-      // Como tem 3 linhas, dividimos por 6 e arredondamos para baixo
-      const row = Math.floor(currentFrame / 6);
-
-      // 2. Converte para porcentagem CSS
-      const x = col * 20.09;
-      const y = row * 50.6;
-
-      spriteEl.style.backgroundPosition = `${x}% ${y}%`;
-
-      // 3. Avança para o próximo quadro
-      currentFrame++;
-
-      // 4. Se chegou no final (18 quadros: 0 a 17), volta pro zero
-      if (currentFrame >= 18) {
-        currentFrame = 0;
-      }
-    }, 80); // 80ms = Aproximadamente 12 FPS (movimento suave)
+    if (this.villainAnimator) this.villainAnimator.play();
   }
 
   stopVillainAnimation() {
-    if (this.villainInterval) clearInterval(this.villainInterval);
-    // Opcional: Resetar para o primeiro quadro ao parar
-    const spriteEl = document.getElementById("villain-sprite");
-    if (spriteEl) {
-      spriteEl.style.backgroundPosition = "0% 0%";
-    }
+    if (this.villainAnimator) this.villainAnimator.stop();
   }
 
   resetEvents() {
     console.log("🔄 Resetando EventController...");
-    
+
     // Para o intervalo do vilão
     if (this.villainInterval) {
-        clearInterval(this.villainInterval);
-        this.villainInterval = null;
+      clearInterval(this.villainInterval);
+      this.villainInterval = null;
     }
-    
+
     // Reseta flags
     this.isEventActive = false;
-    
+
     // Esconde o sprite do vilão
     this.hideVillainSprite();
-    
+
     // Limpa qualquer timeout pendente
     const highestTimeoutId = setTimeout(() => {});
     for (let i = 0; i < highestTimeoutId; i++) {
-        clearTimeout(i);
+      clearTimeout(i);
     }
-}
+  }
 }

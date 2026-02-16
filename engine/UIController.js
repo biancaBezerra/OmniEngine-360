@@ -13,7 +13,6 @@ class UIController {
       progress: document.getElementById("exploration-display"),
       quizOverlay: document.getElementById("quiz-overlay"),
       startScreen: document.getElementById("start-screen"),
-      // NOVOS BOTÕES
       btnNext: document.getElementById("btn-next-dialog"),
       btnHome: document.getElementById("btn-home"),
       btnAudio: document.getElementById("btn-audio"),
@@ -23,8 +22,8 @@ class UIController {
       btnCloseTutorial: document.getElementById("btn-close-tutorial"),
     };
     this.typingInterval = null;
-    this.talkingInterval = null;
     this.pendingCallback = null;
+    this.narratorAnimator = null;
   }
 
   // Agora o init recebe também o onHomeClick
@@ -32,6 +31,12 @@ class UIController {
     this.config = config;
     this.els.title.textContent = config.meta.title;
     this.els.narratorName.textContent = config.narrator.name;
+
+    // INICIALIZAÇÃO DO ANIMATOR
+    this.narratorAnimator = new SpriteAnimator(
+      this.els.narratorSprite,
+      config.theme.assets.narrator_sprite_config,
+    );
 
     // Configuração do B.Y.T.E.
     this.defaultNarrator = {
@@ -45,9 +50,6 @@ class UIController {
       image: config.theme.assets.villain_image || "",
     };
 
-    // Inicializa com B.Y.T.E.
-    this.setNarrator("byte");
-
     document.getElementById("btn-start").onclick = onStartClick;
 
     // --- CONFIGURAÇÃO DO BOTÃO HOME ---
@@ -58,19 +60,23 @@ class UIController {
     // Monitora mudanças na tela de cards para atualizar a classe da UI
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'style' || mutation.attributeName === 'class') {
-          const levelSelect = document.getElementById('level-select');
-          const gameUI = document.getElementById('game-ui');
-          
+        if (
+          mutation.attributeName === "style" ||
+          mutation.attributeName === "class"
+        ) {
+          const levelSelect = document.getElementById("level-select");
+          const gameUI = document.getElementById("game-ui");
+
           if (levelSelect && gameUI) {
-            const isCardsVisible = levelSelect.style.display !== 'none' && 
-                                  levelSelect.style.display !== '' &&
-                                  levelSelect.classList.contains('active');
-            
+            const isCardsVisible =
+              levelSelect.style.display !== "none" &&
+              levelSelect.style.display !== "" &&
+              levelSelect.classList.contains("active");
+
             if (isCardsVisible) {
-              gameUI.classList.add('cards-active');
+              gameUI.classList.add("cards-active");
             } else {
-              gameUI.classList.remove('cards-active');
+              gameUI.classList.remove("cards-active");
             }
           }
         }
@@ -78,7 +84,7 @@ class UIController {
     });
 
     // Observa mudanças na tela de cards
-    const levelSelect = document.getElementById('level-select');
+    const levelSelect = document.getElementById("level-select");
     if (levelSelect) {
       observer.observe(levelSelect, { attributes: true });
     }
@@ -139,6 +145,125 @@ class UIController {
     }
   }
 
+  // --- NOVO MÉTODO PARA GERENCIAR O BOOT ---
+  runBootSequence(audioController, onComplete) {
+    const els = {
+      animation: document.getElementById("boot-animation"),
+      byteContainer: document.querySelector(".boot-byte-container"),
+      pulse: document.querySelector(".boot-pulse"),
+      sprite: document.getElementById("boot-byte-sprite"),
+      dialogContainer: document.getElementById("boot-dialog-container"),
+      matrix: document.getElementById("matrix-bg"),
+    };
+
+    // 1. Preparação Inicial
+    if (els.matrix) {
+      els.matrix.classList.remove("hidden-matrix");
+      els.matrix.style.opacity = "0.4";
+    }
+
+    // Limpezas
+    const existingNarrator = document.getElementById("boot-narrator");
+    if (existingNarrator) existingNarrator.remove();
+    els.dialogContainer.innerHTML = "";
+    els.dialogContainer.classList.remove("visible");
+
+    if (els.sprite) {
+      els.sprite.style.backgroundPosition = "0% 0%";
+      els.sprite.classList.remove("byte-pulsing");
+    }
+
+    // Mostra Overlay
+    els.animation.style.display = "flex";
+    els.pulse.style.display = "block";
+    els.byteContainer.style.display = "none";
+
+    // Som
+    if (this.config.meta.start_sound) {
+      audioController.playSFX(this.config.meta.start_sound);
+    }
+
+    // 2. Sequência Temporal
+    setTimeout(() => {
+      els.pulse.style.display = "none";
+      els.byteContainer.style.display = "block";
+
+      // Cria o Animator específico para o Boot (Lê do JSON agora!)
+      const bootAnimator = new SpriteAnimator(els.sprite, {
+        ...this.config.theme.assets.narrator_sprite_config,
+        fps: 12,
+      });
+
+      // Fase Pulsação
+      bootAnimator.addClass("byte-pulsing");
+
+      // 3. Montagem do Diálogo (Clonagem)
+      const narratorClone = this.els.narratorArea.cloneNode(true);
+      this._setupBootDialogClone(narratorClone); // Método auxiliar abaixo para não poluir
+
+      els.dialogContainer.appendChild(narratorClone);
+
+      // Referências do Clone
+      const cloneText = narratorClone.querySelector("#narrator-text");
+      const cloneBtn = narratorClone.querySelector("#btn-next-dialog");
+
+      // 4. Início da Fala
+      setTimeout(() => {
+        bootAnimator.removeClass("byte-pulsing");
+        bootAnimator.play();
+        els.dialogContainer.classList.add("visible");
+        cloneText.textContent = "";
+
+        // Efeito de Digitação
+        let i = 0;
+        const text = this.config.narrator.intro_text;
+        const interval = setInterval(() => {
+          if (i < text.length) {
+            cloneText.textContent += text.charAt(i);
+            i++;
+          } else {
+            clearInterval(interval);
+            bootAnimator.stop();
+          }
+        }, this.config.narrator.typing_speed);
+
+        // 5. Finalização (Click do Botão)
+        cloneBtn.onclick = () => {
+          clearInterval(interval);
+          bootAnimator.stop();
+          els.animation.style.display = "none";
+          if (document.getElementById("boot-narrator")) {
+            document.getElementById("boot-narrator").remove();
+          }
+
+          // Chama o callback para o main.js continuar o fluxo
+          if (onComplete) onComplete();
+        };
+      }, 2000); // Delay da pulsação
+    }, 2000); // Delay do flash inicial
+  }
+
+  // Método auxiliar privado para limpar o estilo do clone
+  _setupBootDialogClone(clone) {
+    clone.id = "boot-narrator";
+    clone.style.position = "relative";
+    clone.style.bottom = "0";
+    clone.style.left = "0";
+    clone.style.transform = "none";
+    clone.style.margin = "0 auto";
+    clone.style.display = "flex";
+    clone.style.width = "100%";
+
+    const sprite = clone.querySelector("#narrator-sprite");
+    if (sprite) sprite.style.display = "none"; // Remove sprite pequeno
+
+    const name = clone.querySelector("#narrator-name");
+    if (name) name.textContent = this.config.narrator.name;
+
+    const text = clone.querySelector("#narrator-text");
+    if (text) text.textContent = "";
+  }
+
   showScreen(screenId) {
     document
       .querySelectorAll(".screen")
@@ -169,44 +294,31 @@ class UIController {
     }
   }
 
-  // Alterna entre o narrador do vilão e do B.Y.T.E. com base no tipor de fala
-  setNarrator(type) {
-    if (type === "villain") {
+  showNarrator(text, callback, speaker = "byte") {
+    if (speaker === "villain") {
       this.els.narratorName.textContent = this.villainNarrator.name;
-
-      // --- MUDANÇA AQUI: ESCONDE O SPRITE PEQUENO ---
-      // Como o vilão está gigante no meio da tela, não mostramos ele embaixo.
       this.els.narratorSprite.style.display = "none";
-
-      // Centraliza o texto já que não tem imagem
       this.els.narratorArea.style.justifyContent = "center";
     } else {
-      // Configuração do B.Y.T.E. (Esse continua aparecendo embaixo)
+      // Configuração do B.Y.T.E.
       this.els.narratorName.textContent = this.defaultNarrator.name;
-
       this.els.narratorSprite.style.display = "block";
       this.els.narratorSprite.style.backgroundImage = `url('${this.defaultNarrator.image}')`;
       this.els.narratorArea.style.justifyContent = "flex-start";
 
-      this.stopTalkingAnimation();
-    }
-  }
-
-  // Método para garantir que a imagem do B.Y.T.E. seja restaurada
-  showNarrator(text, callback, speaker = "byte") {
-    if (speaker === "byte") {
-      this.els.narratorSprite.style.display = "block";
-      this.els.narratorArea.style.justifyContent = "flex-start";
+      // ✅ CORREÇÃO: Paramos o animador novo, se ele existir
+      if (this.narratorAnimator) {
+        this.narratorAnimator.stop();
+      }
     }
 
-    this.setNarrator(speaker);
     this.pendingCallback = callback;
     this.els.narratorArea.style.display = "flex";
     this.els.narratorText.textContent = "";
 
-    // 1. INICIA A ANIMAÇÃO (Se for o B.Y.T.E.)
-    if (speaker === "byte") {
-      this.startTalkingAnimation();
+    // 1. INICIA A ANIMAÇÃO
+    if (speaker === "byte" && this.narratorAnimator) {
+      this.narratorAnimator.play();
     }
 
     let i = 0;
@@ -218,63 +330,16 @@ class UIController {
       if (i >= text.length) {
         clearInterval(this.typingInterval);
 
-        // 2. PARA A ANIMAÇÃO (Texto acabou)
-        if (speaker === "byte") {
-          this.stopTalkingAnimation();
+        // 2. PARA A ANIMAÇÃO
+        if (speaker === "byte" && this.narratorAnimator) {
+          this.narratorAnimator.stop(); // Volta pro frame 0 automaticamente
         }
       }
     }, this.config.narrator.typing_speed);
   }
 
-  startTalkingAnimation() {
-    if (this.talkingInterval) clearInterval(this.talkingInterval);
-
-    let currentFrame = 0; // Começa do quadro 0
-
-    // Velocidade: 80ms (aprox 12 FPS) para ficar fluido
-    this.talkingInterval = setInterval(() => {
-      // 1. Calcula Coluna e Linha sequencialmente
-      // 6 colunas (0-5)
-      const col = currentFrame % 6;
-
-      // 3 linhas (0-2) -> Divide por 6 e arredonda para baixo
-      const row = Math.floor(currentFrame / 6);
-
-      // 2. Chama a função que aplica o CSS
-      this.setSpriteFrame(col, row);
-
-      // 3. Avança para o próximo quadro
-      currentFrame++;
-
-      // 4. Se chegou no final (18 quadros), volta para o zero
-      if (currentFrame >= 18) {
-        currentFrame = 0;
-      }
-    }, 80);
-  }
-
-  stopTalkingAnimation() {
-    if (this.talkingInterval) clearInterval(this.talkingInterval);
-    // Volta para o quadro neutro (0,0) quando para de falar
-    this.setSpriteFrame(0, 0);
-  }
-
-  setSpriteFrame(col, row) {
-    const x = col * 20; // 0%, 20%, 40%, 60%, 80%, 100%
-
-    // Ajuste padrão: 50% para 3 linhas (0%, 50%, 100%)
-    const y = row * 50.5;
-
-    if (this.els.narratorSprite) {
-      this.els.narratorSprite.style.backgroundPosition = `${x}% ${y}%`;
-    }
-  }
-
   renderLevelSelect(cards, backgroundSrc, onSelect) {
-    // 1. Atualiza o fundo (Vídeo ou Imagem)
     this.updateBackground(backgroundSrc);
-
-    // 2. Renderiza os cards normalmente
     this.els.cardsContainer.innerHTML = "";
     cards.forEach((card) => {
       const el = document.createElement("div");
@@ -350,16 +415,16 @@ class UIController {
     this.els.quizOverlay.style.display = "flex";
     // GARANTE que o overlay está VISÍVEL e com z-index adequado
     this.els.quizOverlay.style.zIndex = "10000";
-    
+
     const qElement = document.getElementById("quiz-question");
     const optsElement = document.getElementById("quiz-options");
-    
+
     // Adiciona a classe ao body para controlar z-index
-    document.body.classList.add('quiz-active');
-    
+    document.body.classList.add("quiz-active");
+
     // Garante que o narrador do B.Y.T.E. fique ACIMA do quiz
     if (this.els.narratorArea) {
-        this.els.narratorArea.style.zIndex = "10001";
+      this.els.narratorArea.style.zIndex = "10001";
     }
 
     let currentQuestionIndex = 0;
@@ -367,14 +432,14 @@ class UIController {
     const totalQuestions = quizData.questions.length;
 
     const renderQuestion = () => {
-        if (currentQuestionIndex >= totalQuestions) {
-            // CHAMADA CORRETA - passando mistakesInThisQuiz e totalQuestions
-            this.showMissionReport(
-                mistakesInThisQuiz,
-                totalQuestions,
-                onCompleteQuiz,
-            );
-            return;
+      if (currentQuestionIndex >= totalQuestions) {
+        // CHAMADA CORRETA - passando mistakesInThisQuiz e totalQuestions
+        this.showMissionReport(
+          mistakesInThisQuiz,
+          totalQuestions,
+          onCompleteQuiz,
+        );
+        return;
       }
 
       const q = quizData.questions[currentQuestionIndex];
@@ -435,7 +500,7 @@ class UIController {
   showMissionReport(mistakes, totalQuestions, onCloseReport) {
     const qElement = document.getElementById("quiz-question");
     const optsElement = document.getElementById("quiz-options");
-    
+
     // GARANTE que o modal está visível
     this.els.quizOverlay.style.display = "flex";
     this.els.quizOverlay.style.zIndex = "10000";
@@ -443,18 +508,18 @@ class UIController {
     // Pega dados do jogo
     const scene = this.game?.state?.currentSceneId;
     const hotspots =
-        this.game?.config?.scenes?.find((s) => s.id === scene)?.hotspots || [];
+      this.game?.config?.scenes?.find((s) => s.id === scene)?.hotspots || [];
     const totalHotspots = hotspots.filter((h) => h.action !== "quiz").length;
     const exploredHotspots = this.game?.state
-        ? hotspots.filter((h) => this.game.state.visitedHotspots.has(h.id)).length
-        : 0;
+      ? hotspots.filter((h) => this.game.state.visitedHotspots.has(h.id)).length
+      : 0;
 
     const timeSpent = this.game?.state?.getElapsedTime() || "0s";
     const correctAnswers = totalQuestions - mistakes;
     const accuracy =
-        totalQuestions > 0
-            ? Math.round((correctAnswers / totalQuestions) * 100)
-            : 0;
+      totalQuestions > 0
+        ? Math.round((correctAnswers / totalQuestions) * 100)
+        : 0;
 
     // Título
     qElement.textContent = "RELATÓRIO DE MISSÃO";
@@ -571,16 +636,16 @@ class UIController {
     `;
 
     closeBtn.onclick = () => {
-        // Remove a classe quando o quiz fechar
-        document.body.classList.remove('quiz-active');
-        
-        // Restaura z-index normal do narrador
-        if (this.els.narratorArea) {
-            this.els.narratorArea.style.zIndex = "400";
-        }
-        
-        this.els.quizOverlay.style.display = "none";
-        onCloseReport(true);
+      // Remove a classe quando o quiz fechar
+      document.body.classList.remove("quiz-active");
+
+      // Restaura z-index normal do narrador
+      if (this.els.narratorArea) {
+        this.els.narratorArea.style.zIndex = "400";
+      }
+
+      this.els.quizOverlay.style.display = "none";
+      onCloseReport(true);
     };
 
     // Monta tudo
@@ -589,7 +654,8 @@ class UIController {
     container.appendChild(statusCard);
 
     const btnWrapper = document.createElement("div");
-    btnWrapper.style.cssText = "display: flex; justify-content: center; width: 100%; margin-top: 10px;";
+    btnWrapper.style.cssText =
+      "display: flex; justify-content: center; width: 100%; margin-top: 10px;";
     btnWrapper.appendChild(closeBtn);
     container.appendChild(btnWrapper);
 
