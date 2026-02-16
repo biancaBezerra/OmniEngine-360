@@ -119,7 +119,6 @@ body {
 
 .screen.active {
   pointer-events: auto;
-  background: rgba(0, 0, 0, 0.85);
 }
 
 #game-ui.active {

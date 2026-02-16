@@ -92,12 +92,33 @@ class UIController {
     // --- CONFIGURAÇÃO DO BOTÃO NEXT ---
     if (this.els.btnNext) {
       this.els.btnNext.onclick = () => {
-        if (this.typingInterval) clearInterval(this.typingInterval);
-        this.els.narratorArea.style.display = "none";
-        if (this.pendingCallback) {
-          const callback = this.pendingCallback;
-          this.pendingCallback = null;
-          callback();
+        if (this.isTyping) {
+          // 1. Para a digitação automática
+          if (this.typingInterval) clearInterval(this.typingInterval);
+          this.typingInterval = null;
+          this.game.audio.stopSpeech();
+
+          // 2. Mostra o texto inteiro imediatamente
+          this.els.narratorText.textContent = this.currentFullText;
+
+          // 3. Atualiza o estado
+          this.isTyping = false;
+
+          // 4. Para a animação da boca (se estiver rodando)
+          if (this.narratorAnimator) {
+            this.narratorAnimator.stop();
+          }
+        }
+        // CENÁRIO 2: O texto já está completo? (Fechar/Avançar)
+        else {
+          this.els.narratorArea.style.display = "none";
+          this.game.audio.stopSpeech();
+
+          if (this.pendingCallback) {
+            const callback = this.pendingCallback;
+            this.pendingCallback = null;
+            callback();
+          }
         }
       };
     }
@@ -178,11 +199,6 @@ class UIController {
     els.pulse.style.display = "block";
     els.byteContainer.style.display = "none";
 
-    // Som
-    if (this.config.meta.start_sound) {
-      audioController.playSFX(this.config.meta.start_sound);
-    }
-
     // 2. Sequência Temporal
     setTimeout(() => {
       els.pulse.style.display = "none";
@@ -212,6 +228,7 @@ class UIController {
         bootAnimator.removeClass("byte-pulsing");
         bootAnimator.play();
         els.dialogContainer.classList.add("visible");
+        audioController.speak(this.config.narrator.intro_text, "byte");
         cloneText.textContent = "";
 
         // Efeito de Digitação
@@ -220,6 +237,7 @@ class UIController {
         const interval = setInterval(() => {
           if (i < text.length) {
             cloneText.textContent += text.charAt(i);
+            if (i % 2 === 0) audioController.playTypingBeep("high");
             i++;
           } else {
             clearInterval(interval);
@@ -229,15 +247,24 @@ class UIController {
 
         // 5. Finalização (Click do Botão)
         cloneBtn.onclick = () => {
-          clearInterval(interval);
-          bootAnimator.stop();
-          els.animation.style.display = "none";
-          if (document.getElementById("boot-narrator")) {
-            document.getElementById("boot-narrator").remove();
-          }
+          if (i < text.length) {
+            clearInterval(interval);
+            cloneText.textContent = text;
+            bootAnimator.stop();
+            i = text.length;
+            audioController.stopSpeech();
+          } else {
+            clearInterval(interval);
+            bootAnimator.stop();
+            els.animation.style.display = "none";
+            audioController.stopSpeech();
 
-          // Chama o callback para o main.js continuar o fluxo
-          if (onComplete) onComplete();
+            // Remove o elemento clone do HTML
+            if (document.getElementById("boot-narrator")) {
+              document.getElementById("boot-narrator").remove();
+            }
+            if (onComplete) onComplete();
+          }
         };
       }, 2000); // Delay da pulsação
     }, 2000); // Delay do flash inicial
@@ -312,11 +339,14 @@ class UIController {
       }
     }
 
+    this.game.audio.speak(text, speaker);
     this.pendingCallback = callback;
     this.els.narratorArea.style.display = "flex";
     this.els.narratorText.textContent = "";
+    this.currentFullText = text;
+    this.isTyping = true;
 
-    // 1. INICIA A ANIMAÇÃO
+    // Inicia animação da boca
     if (speaker === "byte" && this.narratorAnimator) {
       this.narratorAnimator.play();
     }
@@ -326,13 +356,22 @@ class UIController {
 
     this.typingInterval = setInterval(() => {
       this.els.narratorText.textContent += text.charAt(i);
+
+      // 2. Toca o Beep a cada 2 letras (para não ficar irritante demais)
+      if (i % 2 === 0) {
+        // Se for vilão usa tom grave ('low'), se não agudo ('high')
+        const tone = speaker === "villain" ? "low" : "high";
+        this.game.audio.playTypingBeep(tone);
+      }
+
       i++;
       if (i >= text.length) {
         clearInterval(this.typingInterval);
+        this.isTyping = false;
 
-        // 2. PARA A ANIMAÇÃO
+        // Para a boca
         if (speaker === "byte" && this.narratorAnimator) {
-          this.narratorAnimator.stop(); // Volta pro frame 0 automaticamente
+          this.narratorAnimator.stop();
         }
       }
     }, this.config.narrator.typing_speed);
@@ -462,12 +501,10 @@ class UIController {
 
             // FEEDBACK VIA NARRADOR (B.Y.T.E.)
             this.showNarrator(
-              q.feedback_correct || "Correto! Processando...",
+              q.feedback_correct || this.config.gameplay.default_quiz_correct,
               () => {
-                // Callback: Quando fechar o diálogo do B.Y.T.E., vai para a próxima
                 currentQuestionIndex++;
                 renderQuestion();
-                // Reabilita o narrador para o próximo uso se necessário
               },
               "byte",
             );
@@ -477,10 +514,8 @@ class UIController {
 
             // FEEDBACK VIA NARRADOR
             this.showNarrator(
-              q.feedback_wrong || "Dados incorretos. Tente novamente.",
+              q.feedback_wrong || this.config.gameplay.default_quiz_wrong,
               () => {
-                // Callback: Apenas reabilita os botões para tentar de novo
-                // Não avança o index
                 allBtns.forEach((b) => {
                   if (!b.classList.contains("wrong")) b.disabled = false;
                 });

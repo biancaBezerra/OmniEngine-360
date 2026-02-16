@@ -9,7 +9,6 @@ class EventController {
     const scene = this.game.config.scenes.find(
       (s) => s.id === this.game.state.currentSceneId,
     );
-
     if (!scene || !scene.event) return false;
 
     const requiredHotspots = scene.hotspots.filter((h) => h.action !== "quiz");
@@ -24,7 +23,6 @@ class EventController {
       this.triggerEvent(scene);
       return true;
     }
-
     return false;
   }
 
@@ -41,33 +39,26 @@ class EventController {
     this.game.state.eventsTriggered.add(scene.id);
     this.isEventActive = true;
 
-    // 1. ALARME
     if (scene.event.alarm_sound) {
-      this.game.audio.playSFX(scene.event.alarm_sound);
+      this.game.audio.playAlarm(scene.event.alarm_sound);
     }
     this.game.view360.startRedAlert();
 
     setTimeout(() => {
-      // 2. EFEITO GLITCH
       this.game.view360.showGlitchEffect();
-
       setTimeout(() => {
-        // 3. VILÃO APARECE
         this.showVillainSprite();
-
         setTimeout(() => {
-          // 4. VILÃO FALA
           this.game.ui.showNarrator(
             scene.event.villain_speech,
             () => {
-              // 5. B.Y.T.E. ALERTA
               this.game.ui.showNarrator(
                 scene.event.byte_alert,
                 () => {
-                  // 6. FIM DA SEQUÊNCIA
                   this.game.view360.stopRedAlert();
                   this.game.view360.hideGlitchEffect();
                   this.hideVillainSprite();
+                  this.game.audio.stopAlarm();
 
                   if (quizHotspot) {
                     this.game.openQuiz(quizHotspot, scene);
@@ -85,36 +76,45 @@ class EventController {
 
   villainDefeated(scene) {
     this.isEventActive = false;
-    if (scene.event.victory_sound) {
-      this.game.audio.playSFX(scene.event.victory_sound);
-    }
+
+    // --- REMOVI O SOM DAQUI! (Antes ele tocava aqui no começo) ---
 
     this.showVillainSprite();
     this.game.view360.startVictoryGlow();
 
+    // 1. O Glitch fala a derrota ("Nããão! Dados... organizados...")
     this.game.ui.showNarrator(
       scene.event.villain_defeat,
       () => {
+        // --- TUDO AQUI ACONTECE SÓ DEPOIS QUE O GLITCH TERMINA ---
+
         this.game.view360.stopVictoryGlow();
         this.hideVillainSprite();
 
+        // 2. AGORA SIM: Toca o som de vitória (Junto com o Byte)
+        if (scene.event.victory_sound) {
+          this.game.audio.playSFX(scene.event.victory_sound);
+        }
+
+        // 3. O Byte fala a vitória ("Ameaça neutralizada!")
         this.game.ui.showNarrator(
           scene.event.victory_message,
           () => {
-            // ALTERAÇÃO AQUI: voltar para seleção de níveis, não tela inicial
+            // Reset da cena e volta para o Menu
+            console.log("Reiniciando dados da cena:", scene.id);
+            this.game.state.resetScene(scene.id, true);
+
             const hub = this.game.config.scenes.find((s) => s.type === "menu");
             if (hub) {
               this.game.loadMenuScene(hub);
 
-              // Toca a música do menu
               if (this.game.config.meta.menu_bgm) {
                 this.game.audio.playBGM(this.game.config.meta.menu_bgm);
               }
 
-              // Mostra o diálogo do B.Y.T.E. novamente
               setTimeout(() => {
                 this.game.ui.showNarrator(
-                  this.game.config.narrator.after_accept_text,
+                  this.game.config.narrator.select_module_text,
                   null,
                   "byte",
                 );
@@ -128,20 +128,16 @@ class EventController {
     );
   }
 
-  // ===== CONTROLE DO SPRITE GIGANTE =====
-
   showVillainSprite() {
     const villainContainer = document.getElementById("villain-container");
     const villainSprite = document.getElementById("villain-sprite");
 
     if (villainContainer && villainSprite) {
       villainContainer.style.display = "block";
-      void villainContainer.offsetWidth; // Força reflow p/ transição CSS
+      void villainContainer.offsetWidth;
       villainContainer.classList.add("visible");
 
-      // CRIA O ANIMATOR APENAS UMA VEZ OU RECICLA
       if (!this.villainAnimator) {
-        // Usa a config do JSON
         this.villainAnimator = new SpriteAnimator(
           villainSprite,
           this.game.config.theme.assets.villain_sprite_config,
@@ -153,12 +149,9 @@ class EventController {
 
   hideVillainSprite() {
     const villainContainer = document.getElementById("villain-container");
-
-    // Para a animação usando a classe nova
     if (this.villainAnimator) {
       this.villainAnimator.stop();
     }
-
     if (villainContainer) {
       villainContainer.classList.remove("visible");
       setTimeout(() => {
@@ -167,7 +160,6 @@ class EventController {
     }
   }
 
-  // Estes métodos antigos podem ser removidos ou deixados vazios para não quebrar chamadas antigas
   startVillainAnimation() {
     if (this.villainAnimator) this.villainAnimator.play();
   }
@@ -177,21 +169,13 @@ class EventController {
   }
 
   resetEvents() {
-    console.log("🔄 Resetando EventController...");
-
-    // Para o intervalo do vilão
     if (this.villainInterval) {
       clearInterval(this.villainInterval);
       this.villainInterval = null;
     }
-
-    // Reseta flags
     this.isEventActive = false;
-
-    // Esconde o sprite do vilão
     this.hideVillainSprite();
-
-    // Limpa qualquer timeout pendente
+    this.game.audio.stopAlarm();
     const highestTimeoutId = setTimeout(() => {});
     for (let i = 0; i < highestTimeoutId; i++) {
       clearTimeout(i);

@@ -143,7 +143,6 @@ class GameEngine {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("game-ui").style.display = "none";
     document.getElementById("level-select").style.display = "none";
-
     // Chama o UIController para fazer o trabalho sujo
     this.ui.runBootSequence(this.audio, () => {
       // O que acontece quando o boot termina (Callback)
@@ -554,8 +553,9 @@ class GameEngine {
         hotspot.content,
         () => {
           if (isFullyExplored && eventNotTriggered && isFirstVisit) {
+            // --- CORREÇÃO: TEXTO DO JSON ---
             this.ui.showNarrator(
-              "📋 Protocolo de Verificação desbloqueado! Clique no ícone para iniciar.",
+              this.config.narrator.messages.verification_unlocked,
               null,
               "byte",
             );
@@ -570,9 +570,9 @@ class GameEngine {
       const isFullyExplored = this.state.isSceneFullyExplored(sceneData.id);
 
       if (!isFullyExplored) {
+        // --- CORREÇÃO: TEXTO DO JSON ---
         this.ui.showNarrator(
-          hotspot.locked_message ||
-            "Acesso negado. Complete a exploração primeiro.",
+          hotspot.locked_message || this.config.narrator.messages.access_denied,
           null,
           "byte",
         );
@@ -598,11 +598,6 @@ class GameEngine {
     this.ui.showQuiz(hotspot, (success) => {
       if (success) {
         this.state.addScore(this.config.gameplay.points_quiz_correct);
-
-        if (sceneData.event?.victory_sound) {
-          this.audio.playSFX(sceneData.event.victory_sound);
-        }
-
         if (this.events) {
           this.events.villainDefeated(sceneData);
         } else {

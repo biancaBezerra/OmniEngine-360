@@ -2,8 +2,7 @@
   "meta": {
     "title": "Operação Reboot",
     "version": "1.0",
-    "menu_bgm": "assets/audio/boot-sequence.mp3",
-    "start_sound": "assets/audio/system-boot.mp3"
+    "menu_bgm": "assets/audio/boot-sequence.mp3"
   },
   "theme": {
     "colors": {
@@ -47,7 +46,12 @@
     "name": "B.Y.T.E.",
     "typing_speed": 30,
     "intro_text": "Saudações! Eu sou o B.Y.T.E., o teu assistente de diagnóstico. O Grande Servidor do Conhecimento sofreu um apagão crítico. A ligação entre o nosso passado histórico e o nosso hardware foi corrompida! Preciso da tua ajuda para reiniciar o sistema de forma segura. Aceitas a missão na Operação Reboot?",
-    "after_accept_text": "Excelente! Temos dois setores em estado crítico a necessitar de reparação. À esquerda, a Sala de Informática, onde guardamos a nossa memória histórica. À direita, o Núcleo do CPU, o coração físico da máquina. Qual destes módulos desejas restaurar?"
+    "after_accept_text": "Temos dois setores em estado crítico. À esquerda, a Sala de Informática (Memória Histórica). À direita, o Núcleo do CPU (Hardware). Qual destes módulos desejas restaurar?",
+    "select_module_text": "Missão cumprida! O sistema está estável, mas ainda há trabalho a fazer. ESCOLHA O PRÓXIMO MÓDULO QUE DESEJA REPARAR.",
+    "messages": {
+      "verification_unlocked": "Protocolo de Verificação desbloqueado! O GLITCH foi detectado. Clique no ícone para iniciar o confronto!",
+      "access_denied": "Acesso negado. Você precisa investigar todos os componentes da sala antes de desafiar o GLITCH."
+    }
   },
   "scenes": [
     {
@@ -82,9 +86,9 @@
       "event": {
         "type": "villain_appears",
         "alarm_sound": "assets/audio/alarm.mp3",
-        "villain_speech": "Paaaaarado aí, usuário! Achas que podes organizar a minha bagunça? Eu sou o GLITCH! Eu adoro dados perdidos e memórias apagadas. Para quê lembrar da Ada Lovelace ou do Alan Turing? O passado é chato... Eu vou formatar esta sala inteira e transformar a história em LIXO DIGITAL!",
+        "villain_speech": "Parado aí, usuário! Achas que podes organizar a minha bagunça? Eu sou o GLITCH! Eu adoro dados perdidos e memórias apagadas. Para quê lembrar da Ada Lovelace ou do Alan Turing? O passado é chato... Eu vou formatar esta sala inteira e transformar a história em LIXO DIGITAL!",
         "byte_alert": "Alerta! O GLITCH está a tentar apagar o nosso Disco Rígido Histórico! Não deixes que ele vença. Usa o conhecimento que acabaste de adquirir para reconstruir os dados. Responde às perguntas corretamente para enfraquecer o sinal dele!",
-        "villain_defeat": "Nããão! Dados... organizados... demais! Lógica... implacável... Estou a ser... desfragmentadooooo...",
+        "villain_defeat": "Nããão! Dados... organizados... demais! Lógica... implacável... Estou a ser... desfragmentado...",
         "victory_message": "Ameaça neutralizada! O sistema está limpo e seguro novamente. Bom trabalho!",
         "victory_sound": "assets/audio/victory.mp3"
       },
