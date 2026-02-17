@@ -48,6 +48,7 @@
     "intro_text": "Saudações! Eu sou o B.Y.T.E., o teu assistente de diagnóstico. O Grande Servidor do Conhecimento sofreu um apagão crítico. A ligação entre o nosso passado histórico e o nosso hardware foi corrompida! Preciso da tua ajuda para reiniciar o sistema de forma segura. Aceitas a missão na Operação Reboot?",
     "after_accept_text": "Temos dois setores em estado crítico. À esquerda, a Sala de Informática (Memória Histórica). À direita, o Núcleo do CPU (Hardware). Qual destes módulos desejas restaurar?",
     "select_module_text": "Missão cumprida! O sistema está estável, mas ainda há trabalho a fazer. ESCOLHA O PRÓXIMO MÓDULO QUE DESEJA REPARAR.",
+    "final_text": "Missão cumprida! Sistemas 100% restaurados. O Grande Servidor do Conhecimento está novamente operacional. A humanidade pode continuar a aprender com o passado e a construir o futuro. Obrigado por participares na Operação Reboot. Até a próxima, Arquiteto!",
     "messages": {
       "verification_unlocked": "Protocolo de Verificação desbloqueado! O GLITCH foi detectado. Clique no ícone para iniciar o confronto!",
       "access_denied": "Acesso negado. Você precisa investigar todos os componentes da sala antes de desafiar o GLITCH."
@@ -226,7 +227,7 @@
           "label": "Margaret Hamilton",
           "labelPosition": "top",
           "action": "dialog",
-          "content": "Esta é a Margaret Hamilton (EUA, 1969). Ela foi uma das primeiras programadoras de software da história. Criou o software para os primeiros voos tripulados da Apollo 11. Curiosidade: Ela foi a primeira a usar o termo 'software engineering' (engenharia de software) e 0 código que ela escreveu para a Apollo 11 era tão robusto que impediu o computador da nave de travar segundos antes de pousar na Lua, salvando a missão!"
+          "content": "Esta é a Margaret Hamilton (EUA, 1969). Ela foi uma das primeiras programadoras de software da história. Criou o software para os primeiros voos tripulados da Apollo 11. Curiosidade: Ela foi a primeira a usar o termo 'software engineering' (engenharia de software) e o código que ela escreveu para a Apollo 11 era tão robusto que impediu o computador da nave de travar segundos antes de pousar na Lua, salvando a missão!"
         },
         {
           "id": "h_lamarr",
@@ -300,133 +301,133 @@
           "locked_message": "Você precisa encontrar todos os dados antes de iniciar o teste!",
           "questions": [
             {
-              "text": "1. O Teclado e o Mouse foram criados para enviar ordens ao PC. Que tipo de periféricos são?",
+              "text": "O Teclado e o Mouse foram criados para enviar ordens ao PC. Que tipo de periféricos são?",
               "options": [
-                { "text": "A) Saída", "correct": false },
-                { "text": "B) Entrada", "correct": true },
-                { "text": "C) Processamento", "correct": false },
-                { "text": "D) Armazenamento", "correct": false }
+                { "text": "Saída", "correct": false },
+                { "text": "Entrada", "correct": true },
+                { "text": "Processamento", "correct": false },
+                { "text": "Armazenamento", "correct": false }
               ],
               "feedback_correct": "Correto! Eles enviam dados para o computador, por isso são periféricos de entrada.",
               "feedback_wrong": "Incorreto! Pense na direção dos dados: eles estão saindo de você e entrando na máquina?"
             },
             {
-              "text": "2. O Monitor mostra o resultado em forma de luz e imagem. Ele é um periférico de:",
+              "text": "O Monitor mostra o resultado em forma de luz e imagem. Ele é um periférico de:",
               "options": [
-                { "text": "A) Entrada", "correct": false },
-                { "text": "B) Saída", "correct": true },
-                { "text": "C) Entrada e Saída", "correct": false },
-                { "text": "D) Refrigeração", "correct": false }
+                { "text": "Entrada", "correct": false },
+                { "text": "Saída", "correct": true },
+                { "text": "Entrada e Saída", "correct": false },
+                { "text": "Refrigeração", "correct": false }
               ],
               "feedback_correct": "Isso mesmo! O monitor exibe informações, é um periférico de saída.",
               "feedback_wrong": "Incorreto! A função dele é mostrar o resultado do processamento, não receber comandos."
             },
             {
-              "text": "3. O Headset tem fones para ouvir e microfone para falar. Como o classificamos?",
+              "text": "O Headset tem fones para ouvir e microfone para falar. Como o classificamos?",
               "options": [
-                { "text": "A) Apenas Entrada", "correct": false },
-                { "text": "B) Apenas Saída", "correct": false },
-                { "text": "C) Periférico Misto (Entrada e Saída)", "correct": true },
-                { "text": "D) Dispositivo de Armazenamento", "correct": false }
+                { "text": "Apenas Entrada", "correct": false },
+                { "text": "Apenas Saída", "correct": false },
+                { "text": "Periférico Misto (Entrada e Saída)", "correct": true },
+                { "text": "Dispositivo de Armazenamento", "correct": false }
               ],
               "feedback_correct": "Perfeito! Ele combina as duas funções, por isso é misto.",
               "feedback_wrong": "Incorreto! Se ele tem um microfone (entrada) e fones de ouvido (saída), qual seria a classificação?"
             },
             {
-              "text": "4. O Pen Drive substituiu o Disquete. Quantos disquetes de 1.44MB cabem num Pen Drive de 32GB?",
+              "text": "O Pen Drive substituiu o Disquete. Quantos disquetes de 1.44MB cabem num Pen Drive de 32GB?",
               "options": [
-                { "text": "A) Mais de 22.000", "correct": true },
-                { "text": "B) 10", "correct": false },
-                { "text": "C) 100", "correct": false },
-                { "text": "D) Nenhum", "correct": false }
+                { "text": "Mais de 22.000", "correct": true },
+                { "text": "10", "correct": false },
+                { "text": "100", "correct": false },
+                { "text": "Nenhum", "correct": false }
               ],
               "feedback_correct": "Exato! A diferença de capacidade é gigantesca.",
               "feedback_wrong": "Incorreto! Lembre-se que 1GB equivale a mais de 1000 MB. A conta é bem grande."
             },
             {
-              "text": "5. Quem é considerada a primeira programadora da história por ter escrito o primeiro algoritmo?",
+              "text": "Quem é considerada a primeira programadora da história por ter escrito o primeiro algoritmo?",
               "options": [
-                { "text": "A) Margaret Hamilton", "correct": false },
-                { "text": "B) Ada Lovelace", "correct": true },
-                { "text": "C) Hedy Lamarr", "correct": false },
-                { "text": "D) Katherine Johnson", "correct": false }
+                { "text": "Margaret Hamilton", "correct": false },
+                { "text": "Ada Lovelace", "correct": true },
+                { "text": "Hedy Lamarr", "correct": false },
+                { "text": "Katherine Johnson", "correct": false }
               ],
               "feedback_correct": "Isso mesmo! Ada Lovelace escreveu o algoritmo para a máquina de Babbage.",
               "feedback_wrong": "Incorreto! Esta matemática do século XIX é frequentemente chamada de 'mãe da programação'."
             },
             {
-              "text": "6. Grace Hopper (EUA) inventou o \"Compilador\". Para que serviu essa invenção?",
+              "text": "Grace Hopper (EUA) inventou o \"Compilador\". Para que serviu essa invenção?",
               "options": [
-                { "text": "A) Para permitir programar usando inglês em vez de códigos numéricos", "correct": true },
-                { "text": "B) Para resfriar o computador", "correct": false },
-                { "text": "C) Para criar jogos 3D", "correct": false },
-                { "text": "D) Para ligar o computador", "correct": false }
+                { "text": "Para permitir programar usando inglês em vez de códigos numéricos", "correct": true },
+                { "text": "Para resfriar o computador", "correct": false },
+                { "text": "Para criar jogos 3D", "correct": false },
+                { "text": "Para ligar o computador", "correct": false }
               ],
               "feedback_correct": "Correto! Foi a ponte que tornou a programação mais parecida com a linguagem humana.",
               "feedback_wrong": "Incorreto! A invenção dela 'traduz' o que queremos fazer para a linguagem que o computador entende (código de máquina)."
             },
             {
-              "text": "7. Hedy Lamarr, atriz e inventora, criou o \"Salto de Frequência\" (1941). Que tecnologias modernas usam isso hoje?",
+              "text": "Hedy Lamarr, atriz e inventora, criou o \"Salto de Frequência\" (1941). Que tecnologias modernas usam isso hoje?",
               "options": [
-                { "text": "A) O Monitor LCD", "correct": false },
-                { "text": "B) A Impressora 3D", "correct": false },
-                { "text": "C) O Wi-Fi e o Bluetooth", "correct": true },
-                { "text": "D) O Mouse Ótico", "correct": false }
+                { "text": "O Monitor LCD", "correct": false },
+                { "text": "A Impressora 3D", "correct": false },
+                { "text": "O Wi-Fi e o Bluetooth", "correct": true },
+                { "text": "O Mouse Ótico", "correct": false }
               ],
               "feedback_correct": "Isso mesmo! A ideia dela é a base para as comunicações sem fio modernas.",
               "feedback_wrong": "Incorreto! Pense em tecnologias que transmitem dados sem cabos e precisam evitar interferências."
             },
             {
-              "text": "8. Tim Berners-Lee (1989) queria facilitar o compartilhar informações. O que ele criou?",
+              "text": "Tim Berners-Lee (1989) queria facilitar o compartilhar informações. O que ele criou?",
               "options": [
-                { "text": "A) A World Wide Web (WWW), sites e links", "correct": true },
-                { "text": "B) O chip de processador", "correct": false },
-                { "text": "C) O Mouse", "correct": false },
-                { "text": "D) O Pen Drive", "correct": false }
+                { "text": "A World Wide Web (WWW), sites e links", "correct": true },
+                { "text": "O chip de processador", "correct": false },
+                { "text": "O Mouse", "correct": false },
+                { "text": "O Pen Drive", "correct": false }
               ],
               "feedback_correct": "Correto! Ele criou a teia mundial, a WWW, que usamos para acessar a internet.",
               "feedback_wrong": "Incorreto! A criação dele é o sistema de páginas com links que você usa no navegador, não o hardware."
             },
             {
-              "text": "9. Katherine Johnson (NASA) foi fundamental nos anos 60. Qual foi a sua função?",
+              "text": "Katherine Johnson (NASA) foi fundamental nos anos 60. Qual foi a sua função?",
               "options": [
-                { "text": "A) Criar o Linux", "correct": false },
-                { "text": "B) Calcular à mão as trajetórias para levar o homem ao espaço", "correct": true },
-                { "text": "C) Desenhar o teclado", "correct": false },
-                { "text": "D) Inventar a câmera digital", "correct": false }
+                { "text": "Criar o Linux", "correct": false },
+                { "text": "Calcular à mão as trajetórias para levar o homem ao espaço", "correct": true },
+                { "text": "Desenhar o teclado", "correct": false },
+                { "text": "Inventar a câmera digital", "correct": false }
               ],
               "feedback_correct": "Perfeito! A precisão dos cálculos dela foi essencial para o sucesso das missões espaciais.",
               "feedback_wrong": "Incorreto! O trabalho dela era essencial para responder a perguntas como 'qual o caminho até a Lua?'"
             },
             {
-              "text": "10. Douglas Engelbart mudou a forma como usamos o PC ao inventar?",
+              "text": "Douglas Engelbart mudou a forma como usamos o PC ao inventar?",
               "options": [
-                { "text": "A) O Teclado", "correct": false },
-                { "text": "B) O Pen Drive", "correct": false },
-                { "text": "C) O Mouse", "correct": true },
-                { "text": "D) A Placa de Som", "correct": false }
+                { "text": "O Teclado", "correct": false },
+                { "text": "O Pen Drive", "correct": false },
+                { "text": "O Mouse", "correct": true },
+                { "text": "A Placa de Som", "correct": false }
               ],
               "feedback_correct": "Exato! Ele apresentou o mouse como uma forma mais intuitiva de interagir com o computador.",
               "feedback_wrong": "Incorreto! Pense em um dispositivo que usamos para apontar e clicar em ícones e menus."
             },
             {
-              "text": "11. Alan Turing (Inglaterra) é famoso por criar a \"Máquina Universal\" e também por:",
+              "text": "Alan Turing (Inglaterra) é famoso por criar a \"Máquina Universal\" e também por:",
               "options": [
-                { "text": "A) Inventar o Facebook", "correct": false },
-                { "text": "B) Quebrar códigos secretos nazistas na 2ª Guerra Mundial", "correct": true },
-                { "text": "C) Criar o Windows", "correct": false },
-                { "text": "D) Inventar a impressora", "correct": false }
+                { "text": "Inventar o Facebook", "correct": false },
+                { "text": "Quebrar códigos secretos nazistas na 2ª Guerra Mundial", "correct": true },
+                { "text": "Criar o Windows", "correct": false },
+                { "text": "Inventar a impressora", "correct": false }
               ],
               "feedback_correct": "Correto! O trabalho dele de criptoanálise foi crucial para os Aliados.",
               "feedback_wrong": "Incorreto! Durante a Segunda Guerra Mundial, ele liderou uma equipe que decifrava mensagens inimigas."
             },
             {
-              "text": "12. Linus Torvalds é famoso por criar qual sistema de código aberto?",
+              "text": "Linus Torvalds é famoso por criar qual sistema de código aberto?",
               "options": [
-                { "text": "A) Windows", "correct": false },
-                { "text": "B) MacOs", "correct": false },
-                { "text": "C) iOS", "correct": false },
-                { "text": "D) Linux", "correct": true }
+                { "text": "Windows", "correct": false },
+                { "text": "MacOs", "correct": false },
+                { "text": "iOS", "correct": false },
+                { "text": "Linux", "correct": true }
               ],
               "feedback_correct": "Isso mesmo! Ele é o criador original do kernel Linux, a base de muitos sistemas.",
               "feedback_wrong": "Incorreto! É um sistema operacional famoso por ser livre e de código aberto, concorrente do Windows."
@@ -562,133 +563,133 @@
           "locked_message": "Analise todos os componentes primeiro.",
           "questions": [
             {
-              "text": "1. Qual peça funciona como o \"cérebro\" do computador, realizando todos os cálculos?",
+              "text": "Qual peça funciona como o \"cérebro\" do computador, realizando todos os cálculos?",
               "options": [
-                { "text": "A) Fonte de Alimentação", "correct": false },
-                { "text": "B) Processador (CPU)", "correct": true },
-                { "text": "C) Cooler", "correct": false },
-                { "text": "D) Gabinete", "correct": false }
+                { "text": "Fonte de Alimentação", "correct": false },
+                { "text": "Processador (CPU)", "correct": true },
+                { "text": "Cooler", "correct": false },
+                { "text": "Gabinete", "correct": false }
               ],
               "feedback_correct": "Exato! A CPU é o centro de processamento e controle do sistema.",
               "feedback_wrong": "Incorreto! Qual é o componente que 'pensa' e processa as instruções dos programas?"
             },
             {
-              "text": "2. A Placa-Mãe tem qual função principal?",
+              "text": "A Placa-Mãe tem qual função principal?",
               "options": [
-                { "text": "A) Gerar energia para a casa", "correct": false },
-                { "text": "B) Conectar todas as peças do computador entre si", "correct": true },
-                { "text": "C) Guardar fotos permanentemente", "correct": false },
-                { "text": "D) Esfriar o computador", "correct": false }
+                { "text": "Gerar energia para a casa", "correct": false },
+                { "text": "Conectar todas as peças do computador entre si", "correct": true },
+                { "text": "Guardar fotos permanentemente", "correct": false },
+                { "text": "Esfriar o computador", "correct": false }
               ],
               "feedback_correct": "Perfeito! Ela é a base que interliga todos os componentes.",
               "feedback_wrong": "Incorreto! Pense nela como a 'espinha dorsal' ou a 'plataforma' onde tudo é conectado."
             },
             {
-              "text": "3. A Memória RAM guarda dados temporariamente. O que acontece com ela se desligarmos a energia?",
+              "text": "A Memória RAM guarda dados temporariamente. O que acontece com ela se desligarmos a energia?",
               "options": [
-                { "text": "A) Ela grava tudo no disco", "correct": false },
-                { "text": "B) Ela apaga tudo o que estava guardado", "correct": true },
-                { "text": "C) Ela começa a apitar", "correct": false },
-                { "text": "D) Ela transforma-se num SSD", "correct": false }
+                { "text": "Ela grava tudo no disco", "correct": false },
+                { "text": "Ela apaga tudo o que estava guardado", "correct": true },
+                { "text": "Ela começa a apitar", "correct": false },
+                { "text": "Ela transforma-se num SSD", "correct": false }
               ],
               "feedback_correct": "Correto! Por isso ela é chamada de memória 'volátil'.",
               "feedback_wrong": "Incorreto! A informação nela é como um quadro branco: quando a energia acaba, o que acontece com o que está escrito?"
             },
             {
-              "text": "4. Qual é a diferença principal entre a RAM e o SSD/HD?",
+              "text": "Qual é a diferença principal entre a RAM e o SSD/HD?",
               "options": [
-                { "text": "A) A RAM é lenta e o SSD é rápido", "correct": false },
-                { "text": "B) A RAM é permanente e o SSD é temporário", "correct": false },
-                { "text": "C) A RAM é temporária e rápida; o SSD é permanente e armazena arquivos", "correct": true },
-                { "text": "D) Não há diferença", "correct": false }
+                { "text": "A RAM é lenta e o SSD é rápido", "correct": false },
+                { "text": "A RAM é permanente e o SSD é temporário", "correct": false },
+                { "text": "A RAM é temporária e rápida; o SSD é permanente e armazena arquivos", "correct": true },
+                { "text": "Não há diferença", "correct": false }
               ],
               "feedback_correct": "Isso mesmo! Uma é a memória de trabalho e a outra é o armazenamento permanente.",
               "feedback_wrong": "Incorreto! Uma guarda o que você está fazendo AGORA, a outra guarda o que você tem SALVO."
             },
             {
-              "text": "5. Para que serve a Fonte de Alimentação?",
+              "text": "Para que serve a Fonte de Alimentação?",
               "options": [
-                { "text": "A) Para ligar o monitor", "correct": false },
-                { "text": "B) Para transformar a energia da tomada na voltagem correta para as peças", "correct": true },
-                { "text": "C) Para aumentar a velocidade da internet", "correct": false },
-                { "text": "D) Para guardar energia como uma bateria", "correct": false }
+                { "text": "Para ligar o monitor", "correct": false },
+                { "text": "Para transformar a energia da tomada na voltagem correta para as peças", "correct": true },
+                { "text": "Para aumentar a velocidade da internet", "correct": false },
+                { "text": "Para guardar energia como uma bateria", "correct": false }
               ],
               "feedback_correct": "Correto! Ela converte a corrente alternada em corrente contínua nas tensões adequadas.",
               "feedback_wrong": "Incorreto! A energia da tomada (127V ou 220V) é forte demais para os componentes. O que reduz essa tensão?"
             },
             {
-              "text": "6. O Processador esquenta muito. Qual peça é vital para evitar que ele queime?",
+              "text": "O Processador esquenta muito. Qual peça é vital para evitar que ele queime?",
               "options": [
-                { "text": "A) O Cabo Flat", "correct": false },
-                { "text": "B) O Cooler (Ventoinha)", "correct": true },
-                { "text": "C) A Placa de Vídeo", "correct": false },
-                { "text": "D) O Disco Rígido", "correct": false }
+                { "text": "O Cabo Flat", "correct": false },
+                { "text": "O Cooler (Ventoinha)", "correct": true },
+                { "text": "A Placa de Vídeo", "correct": false },
+                { "text": "O Disco Rígido", "correct": false }
               ],
               "feedback_correct": "Exato! O cooler dissipa o calor gerado pelo processador.",
               "feedback_wrong": "Incorreto! Se ele esquenta, qual é o componente responsável por resfriá-lo? (Obs.: geralmente tem hélices)."
             },
             {
-              "text": "7. O que é um Watercooler?",
+              "text": "O que é um Watercooler?",
               "options": [
-                { "text": "A) Um tipo de memória à prova d'água", "correct": false },
-                { "text": "B) Um sistema de refrigeração que usa líquido em vez de apenas ar", "correct": true },
-                { "text": "C) Um jogo de computador", "correct": false },
-                { "text": "D) Uma fonte de energia hidrelétrica", "correct": false }
+                { "text": "Um tipo de memória à prova d'água", "correct": false },
+                { "text": "Um sistema de refrigeração que usa líquido em vez de apenas ar", "correct": true },
+                { "text": "Um jogo de computador", "correct": false },
+                { "text": "Uma fonte de energia hidrelétrica", "correct": false }
               ],
               "feedback_correct": "Isso mesmo! É um sistema de arrefecimento a líquido, mais eficiente em muitos casos.",
               "feedback_wrong": "Incorreto! O nome já dá uma dica: usa um líquido para transportar o calor, em vez de apenas metal e ventoinha."
             },
             {
-              "text": "8. Qual é a função geral dos cabos coloridos da fonte?",
+              "text": "Qual é a função geral dos cabos coloridos da fonte?",
               "options": [
-                { "text": "A) Apenas decoração", "correct": false },
-                { "text": "B) Levar diferentes voltagens (como 12V e 5V) para componentes diferentes", "correct": true },
-                { "text": "C) Transmitir dados de internet", "correct": false },
-                { "text": "D) Segurar as peças no lugar", "correct": false }
+                { "text": "Apenas decoração", "correct": false },
+                { "text": "Levar diferentes voltagens (como 12V e 5V) para componentes diferentes", "correct": true },
+                { "text": "Transmitir dados de internet", "correct": false },
+                { "text": "Segurar as peças no lugar", "correct": false }
               ],
               "feedback_correct": "Perfeito! Cada cor (ou padrão) indica uma tensão específica para cada tipo de peça.",
               "feedback_wrong": "Incorreto! Será que a fonte manda a mesma energia para o processador e para um motor de ventilador?"
             },
             {
-              "text": "9. Se quiseres rodar jogos com gráficos pesados, precisas de uma Placa de Vídeo. Onde ela é encaixada?",
+              "text": "Se quiseres rodar jogos com gráficos pesados, precisas de uma Placa de Vídeo. Onde ela é encaixada?",
               "options": [
-                { "text": "A) No slot PCI Express", "correct": true },
-                { "text": "B) No soquete do processador", "correct": false },
-                { "text": "C) Na entrada USB", "correct": false },
-                { "text": "D) Dentro da Fonte", "correct": false }
+                { "text": "No slot PCI Express", "correct": true },
+                { "text": "No soquete do processador", "correct": false },
+                { "text": "Na entrada USB", "correct": false },
+                { "text": "Dentro da Fonte", "correct": false }
               ],
               "feedback_correct": "Correto! Esse slot de expansão é o local ideal para placas de vídeo dedicadas.",
               "feedback_wrong": "Incorreto! Na placa-mãe, existe um slot longo específico para conectar placas de expansão poderosas."
             },
             {
-              "text": "10. Se o teu computador antigo não tem Wi-Fi, onde podes conectar uma placa adaptadora para ter internet sem fio?",
+              "text": "Se o teu computador antigo não tem Wi-Fi, onde podes conectar uma placa adaptadora para ter internet sem fio?",
               "options": [
-                { "text": "A) No Cooler", "correct": false },
-                { "text": "B) Na entrada PCI", "correct": true },
-                { "text": "C) No Cabo de Força", "correct": false },
-                { "text": "D) No Monitor", "correct": false }
+                { "text": "No Cooler", "correct": false },
+                { "text": "Na entrada PCI", "correct": true },
+                { "text": "No Cabo de Força", "correct": false },
+                { "text": "No Monitor", "correct": false }
               ],
               "feedback_correct": "Isso mesmo! Você usaria um slot de expansão, como o PCI, para adicionar essa funcionalidade.",
               "feedback_wrong": "Incorreto! Onde você encaixa outras placas, como a de Wi-Fi ou Bluetooth, para adicionar funções ao PC?"
             },
             {
-              "text": "11. O que é o Cabo SATA serve para conectar o HD à Placa-Mãe. Qual a função dele?",
+              "text": "O que é o Cabo SATA serve para conectar o HD à Placa-Mãe. Qual a função dele?",
               "options": [
-                { "text": "A) Resfriar o sistema", "correct": false },
-                { "text": "B) Transportar dados em alta velocidade", "correct": true },
-                { "text": "C) Fornecer energia wireless", "correct": false },
-                { "text": "D) Segurar o gabinete", "correct": false }
+                { "text": "Resfriar o sistema", "correct": false },
+                { "text": "Transportar dados em alta velocidade", "correct": true },
+                { "text": "Fornecer energia wireless", "correct": false },
+                { "text": "Segurar o gabinete", "correct": false }
               ],
               "feedback_correct": "Correto! É o caminho por onde os dados trafegam entre o HD e a placa-mãe.",
               "feedback_wrong": "Incorreto! Se o HD é onde os dados ficam guardados, o que esse cabo faz? Leva música, fotos e documentos?"
             },
             {
-              "text": "12. Qual componente é responsável por distribuir energia, dados e comandos para todo o sistema como se fossem estradas?",
+              "text": "Qual componente é responsável por distribuir energia, dados e comandos para todo o sistema como se fossem estradas?",
               "options": [
-                { "text": "A) O Processador", "correct": false },
-                { "text": "B) O HD", "correct": false },
-                { "text": "C) A Placa-Mãe", "correct": true },
-                { "text": "D) A Placa de Vídeo", "correct": false }
+                { "text": "O Processador", "correct": false },
+                { "text": "O HD", "correct": false },
+                { "text": "A Placa-Mãe", "correct": true },
+                { "text": "A Placa de Vídeo", "correct": false }
               ],
               "feedback_correct": "Exato! A Placa-Mãe é o grande centro de conexão, a cidade com todas as suas estradas.",
               "feedback_wrong": "Incorreto! Qual peça tem os 'caminhos' (trilhas) que ligam o processador à memória e aos outros componentes?"
