@@ -82,34 +82,115 @@
       "image": "assets/images/sala_informatica_360.png",
       "initial_view": "180,-20",
       "audio_ambience": "assets/audio/office-ambience.mp3",
-      "narrator_intro": "Acedendo à Memória Histórica... Encontra os periféricos e os pioneiros nas paredes.",
+      "narrator_intro": "Clique nos periféricos sob a mesa e os pioneiros nas paredes para liberar o protocolo de verificação e enfrentar o GLITCH!",
       "event": {
         "type": "villain_appears",
         "alarm_sound": "assets/audio/alarm.mp3",
         "villain_speech": "Parado aí, usuário! Achas que podes organizar a minha bagunça? Eu sou o GLITCH! Eu adoro dados perdidos e memórias apagadas. Para quê lembrar da Ada Lovelace ou do Alan Turing? O passado é chato... Eu vou formatar esta sala inteira e transformar a história em LIXO DIGITAL!",
-        "byte_alert": "Alerta! O GLITCH está a tentar apagar o nosso Disco Rígido Histórico! Não deixes que ele vença. Usa o conhecimento que acabaste de adquirir para reconstruir os dados. Responde às perguntas corretamente para enfraquecer o sinal dele!",
-        "villain_defeat": "Nããão! Dados... organizados... demais! Lógica... implacável... Estou a ser... desfragmentado...",
+        "byte_alert": "O GLITCH está a tentar apagar o nosso Disco Rígido Histórico! Não deixes que ele vença. Usa o conhecimento que acabaste de adquirir para reconstruir os dados. Responde às perguntas corretamente para enfraquecer o sinal dele!",
+        "villain_defeat": "Não! Dados... organizados... demais! Lógica... implacável... Estou a ser... desfragmentado...",
         "victory_message": "Ameaça neutralizada! O sistema está limpo e seguro novamente. Bom trabalho!",
         "victory_sound": "assets/audio/victory.mp3"
       },
       "hotspots": [
         {
+          "id": "h_keyboard",
+          "position": "-130,-40",
+          "icon": "keyboard",
+          "label": "Teclado",
+          "labelPosition": "right",
+          "action": "dialog",
+          "content": "Este é um Periférico de Entrada essencial para enviar comandos de texto e atalhos para o processador. Curiosidade: Sua origem vem das máquinas de escrever de 1868 (EUA), criadas por Christopher Sholes."
+        },
+        {
+          "id": "h_mouse",
+          "position": "-100,-50",
+          "icon": "mouse",
+          "label": "Mouse",
+          "labelPosition": "right",
+          "action": "dialog",
+          "content": "Este é um Periférico de Entrada e serve para controlar o cursor na tela com o movimento da tua mão. Criado em 1964 (EUA) por Douglas Engelbart. Curiosidade: O primeiro modelo da história não era de plástico, mas sim uma caixa de madeira com duas rodinhas de metal por baixo!"
+        },
+        {
+          "id": "h_monitor",
+          "position": "-130,-10",
+          "icon": "display",
+          "label": "Monitor",
+          "labelPosition": "right",
+          "action": "dialog",
+          "content": "Este é um clássico Periférico de Saída. Ele serve para mostrar visualmente o resultado do processamento de dados, transformando os dados em luz e imagem. Curiosidade: Um pixel é o menor ponto de luz na tela. Sabias que um monitor Full HD tem mais de 2 milhões de pixels piscando ao mesmo tempo para formar a imagem que vês agora?"
+        },
+        {
+          "id": "h_sound-box",
+          "position": "-100,-30",
+          "icon": "radio",
+          "label": "Caixa de Som",
+          "labelPosition": "right",
+          "action": "dialog",
+          "content": "Este é um Periférico de Saída de áudio. Serve para o computador emitir sons, músicas e alertas de sistema para tu ouvires. Curiosidade: Os primeiros computadores só faziam 'bip' e 'bop'. Hoje, conseguimos som de cinema graças à evolução das placas de som!"
+        },
+        {
+          "id": "h_headset",
+          "position": "-100,-10",
+          "icon": "headphones",
+          "label": "Headset",
+          "labelPosition": "right",
+          "action": "dialog",
+          "content": "Atenção, este é um Periférico Híbrido! Ou seja, de entrada e saída. Ele serve para ouvir e falar ao mesmo tempo! Os fones são Saída e o microfone é Entrada. Curiosidade: Foi criado originalmente para telefonistas e pilotos de avião ficarem com as mãos livres, antes de virar moda nos jogos."
+        },
+        {
+          "id": "h_printer",
+          "position": "-50,-20",
+          "icon": "print",
+          "label": "Impressora",
+          "labelPosition": "right",
+          "action": "dialog",
+          "content": "Normalmente, a impressora é um Periférico de Saída, pois imprime informações do computador para o papel. Mas atenção! Se ela for “Multifuncional”, e tiver um Scanner, ela se torna um Periférico Misto, servindo para imprimir (saída) e escanear (entrada), ou seja, transforma o papel em digital e vice-versa. Curiosidade: Sabias que as impressoras 3D mais modernas já conseguem 'imprimir' casas inteiras e comidas?"
+        },
+        {
+          "id": "h_floppy-disk",
+          "position": "-70,-43",
+          "icon": "save",
+          "label": "Disquete",
+          "labelPosition": "right",
+          "action": "dialog",
+          "content": "Uma relíquia! Este é um disco magnético que serve para guardar arquivos pequenos. Foi popularizado pela IBM em 1971 (EUA). Curiosidade: Ele guardava apenas 1,44 MB. Para instalar um jogo moderno como Fortnite usando disquete, precisarias de uma pilha de quase 30.000 disquetes!"
+        },
+        {
+          "id": "h_cd-rom",
+          "position": "-40,-40",
+          "icon": "compact-disc",
+          "label": "CD-ROM",
+          "labelPosition": "right",
+          "action": "dialog",
+          "content": "A evolução do Disquete! Este disco serve para guardar dados como músicas, jogos, etc., guardando cerca de 700 MB. Ele usa laser para ler e gravar dados. Foi criado em 1982 (Japão/Holanda). Curiosidade: Sabias que a capacidade do CD-ROM (74 minutos) foi escolhida pelo presidente da Sony só para que a 9ª Sinfonia de Beethoven coubesse inteira num único disco?"
+        },
+        {
+          "id": "h_pendrive",
+          "position": "-40,-54",
+          "icon": "brands fa-usb",
+          "label": "Pendrive",
+          "labelPosition": "right",
+          "action": "dialog",
+          "content": "Pequeno, mas poderoso! Serve para transportar grande quantidade de dados no bolso. Surgiu por volta do ano 2000 (Israel/Singapura). Curiosidade: Um único Pen Drive simples de 32 GB consegue guardar o conteúdo de mais de 22.000 disquetes!"
+        },
+        {
           "id": "h_ada",
-          "position": "-10,1",
+          "position": "103,18",
           "icon": "user-graduate",
           "label": "Ada Lovelace",
           "labelPosition": "top",
           "action": "dialog",
-          "content": "Ada Lovelace: A primeira programadora da história. Ela escreveu o primeiro algoritmo muito antes de existir um computador físico!"
+          "content": "Esta é a Condessa Ada Lovelace (Inglaterra, 1843). Ela percebeu que a máquina criada por Babbage podia fazer mais do que contas. Curiosidade:  Ela é considerada a primeira programadora da história! Foi ela quem escreveu o primeiro algoritmo para computador, 100 anos antes de existir um computador eletrônico!"
         },
         {
-          "id": "h_mouse",
-          "position": "-110,-50",
-          "icon": "mouse",
-          "label": "Teclado e Mouse",
-          "labelPosition": "right",
+          "id": "h_babbage",
+          "position": "142,13",
+          "icon": "user-graduate",
+          "label": "Charles Babbage",
+          "labelPosition": "top",
           "action": "dialog",
-          "content": "Periféricos de Entrada: É assim que você fala com a máquina."
+          "content": "Este é Charles Babbage (Inglaterra, 1837). Ele projetou a 'Máquina Analítica' mecânica para fazer cálculos sem erros. Curiosidade: Conhecido como o 'Avô do Computador', ele nunca conseguiu terminá-la porque a tecnologia da época não era avançada o suficiente!"
         },
         {
           "id": "h_quiz_sala",
