@@ -1532,13 +1532,51 @@ body.at-start #btn-home {
     max-width: 130px;
   }
 
+  #cards-container {
+    max-height: 45vh;
+    min-height: auto;
+    height: auto;
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+
+  .level-card {
+    height: auto;
+    min-height: fit-content;
+  }
+
   .level-card img {
     height: 90px;
   }
 
+  h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
   .level-card p {
-    font-size: 0.85rem;
-    padding: 8px;
+  padding: 8px 10px;
+  margin: 0;
+  word-wrap: break-word;
+  }
+
+  .level-card p strong {
+    display: block;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    line-height: 1.2;
+  }
+
+  .level-card p small {
+    display: block;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    margin-top: -8px;
+    margin-bottom: 2px;
+  }
+
+  .level-card img {
+    height: 70px;
   }
 
   .step i {
