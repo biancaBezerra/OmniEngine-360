@@ -44,7 +44,7 @@
   },
   "narrator": {
     "name": "B.Y.T.E.",
-    "typing_speed": 30,
+    "typing_speed": 60,
     "intro_text": "Saudações! Eu sou o B.Y.T.E., o teu assistente de diagnóstico. O Grande Servidor do Conhecimento sofreu um apagão crítico. A ligação entre o nosso passado histórico e o nosso hardware foi corrompida! Preciso da tua ajuda para reiniciar o sistema de forma segura. Aceitas a missão na Operação Reboot?",
     "after_accept_text": "Temos dois setores em estado crítico. À esquerda, a Sala de Informática (Memória Histórica). À direita, o Núcleo do CPU (Hardware). Qual destes módulos desejas restaurar?",
     "select_module_text": "Missão cumprida! O sistema está estável, mas ainda há trabalho a fazer. ESCOLHA O PRÓXIMO MÓDULO QUE DESEJA REPARAR.",

@@ -46,6 +46,19 @@ class GameEngine {
       () => this.playBootAnimation(),
       () => this.goHome(),
     );
+
+    // --- NOVO: Listener global para visibilidade (troca de aba) ---
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        this.audio.stopAll();
+        this.ui.stopTypingAnimation();
+      }
+    });
+
+    // --- NOVO: Listener para reload da página ---
+    window.addEventListener("beforeunload", () => {
+      this.audio.stopAll();
+    });
   }
 
   setupConfirmationModal() {
@@ -92,7 +105,7 @@ class GameEngine {
       // QUINTO: Limpa o estado do jogo se necessário
       document.body.classList.remove("at-start");
 
-       // --- NOVO: Reseta os módulos completados ---
+      // --- NOVO: Reseta os módulos completados ---
       if (this.state) {
         this.state.completedModules.clear();
       }
@@ -220,9 +233,11 @@ class GameEngine {
       this.ui.els.narratorArea.style.zIndex = "400";
     }
 
-    // 1. Para TODOS os áudios
+    // 1. Para TODOS os áudios e FALAS
     if (this.audio) {
       this.audio.stopBGM();
+      this.audio.stopSpeech(); // <--- CRÍTICO: Para a voz do narrador imediatamente
+      this.audio.stopAlarm(); // <--- CRÍTICO: Garante que alarmes parem
       this.audio.bgm.src = "";
       this.audio.bgm.load();
     }
@@ -289,21 +304,11 @@ class GameEngine {
       this.state.reset();
     }
 
-    // 9. Limpa diálogos do narrador
+    // 9. Limpa diálogos do narrador e animação de digitação
     if (this.ui) {
+      this.ui.stopTypingAnimation(); // <--- CRÍTICO: Usa o novo método centralizado para parar digitação
       this.ui.els.narratorArea.style.display = "none";
-      if (this.ui.typingInterval) {
-        clearInterval(this.ui.typingInterval);
-        this.ui.typingInterval = null;
-      }
-      if (this.ui.talkingInterval) {
-        clearInterval(this.ui.talkingInterval);
-        this.ui.talkingInterval = null;
-      }
       this.ui.pendingCallback = null;
-      if (this.ui.narratorAnimator) {
-        this.ui.narratorAnimator.stop();
-      }
     }
 
     // 10. Esconde TODAS as telas
@@ -352,7 +357,7 @@ class GameEngine {
       btnHome.style.display = "none";
     }
 
-    // 18. Mostra a tela inicial IMEDIATAMENTE (sem setTimeout)
+    // 18. Mostra a tela inicial IMEDIATAMENTE
     document.getElementById("start-screen").style.display = "flex";
     document.getElementById("start-screen").classList.add("active");
 
@@ -381,12 +386,11 @@ class GameEngine {
       this.audio.playBGM(this.config.meta.menu_bgm);
     }
 
-    // 22. Reativa a matrix background (com transição removida temporariamente)
+    // 22. Reativa a matrix
     const matrixBg = document.getElementById("matrix-bg");
     if (matrixBg) {
       matrixBg.style.transition = "none";
       matrixBg.style.opacity = "0.4";
-      // Restaura a transição depois
       setTimeout(() => {
         matrixBg.style.transition = "opacity 0.3s ease";
       }, 50);
@@ -646,28 +650,32 @@ class GameEngine {
   // NOVO MÉTODO 1: Sequência final
   playFinalSequence() {
     console.log("🎬 Finalizando jogo - todos os módulos concluídos!");
-    
+
     // 1. Esconde a cena 360
     document.getElementById("scene-container").style.display = "none";
-    
+
     // 2. Reseta o estado do jogo (isso já limpa score, hotspots, módulos, etc)
     if (this.state) {
       this.state.reset();
     }
-    
+
     // 3. Para a música ambiente
     if (this.audio) {
       this.audio.stopBGM();
     }
-    
+
     // 4. Ativa a matrix
     this.setMatrixState(true);
-    
+
     // 5. Executa o boot final
-    this.ui.runBootSequence(this.audio, () => {
-      // Quando o boot terminar, USA O goToStartScreen que já faz TUDO
-      this.goToStartScreen();
-    }, this.config.narrator.final_text);
+    this.ui.runBootSequence(
+      this.audio,
+      () => {
+        // Quando o boot terminar, USA O goToStartScreen que já faz TUDO
+        this.goToStartScreen();
+      },
+      this.config.narrator.final_text,
+    );
   }
 }
 

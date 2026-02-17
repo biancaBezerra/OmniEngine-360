@@ -26,25 +26,21 @@ class UIController {
     this.narratorAnimator = null;
   }
 
-  // Agora o init recebe também o onHomeClick
   init(config, onStartClick, onHomeClick) {
     this.config = config;
     this.els.title.textContent = config.meta.title;
     this.els.narratorName.textContent = config.narrator.name;
 
-    // INICIALIZAÇÃO DO ANIMATOR
     this.narratorAnimator = new SpriteAnimator(
       this.els.narratorSprite,
       config.theme.assets.narrator_sprite_config,
     );
 
-    // Configuração do B.Y.T.E.
     this.defaultNarrator = {
       name: config.narrator.name,
       image: config.theme.assets.narrator_image,
     };
 
-    // Configuração do GLITCH
     this.villainNarrator = {
       name: config.theme.assets.villain_name || "GLITCH",
       image: config.theme.assets.villain_image || "",
@@ -52,12 +48,11 @@ class UIController {
 
     document.getElementById("btn-start").onclick = onStartClick;
 
-    // --- CONFIGURAÇÃO DO BOTÃO HOME ---
     if (this.els.btnHome) {
       this.els.btnHome.onclick = onHomeClick;
     }
 
-    // Monitora mudanças na tela de cards para atualizar a classe da UI
+    // Monitora mudanças na tela de cards
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (
@@ -83,37 +78,25 @@ class UIController {
       });
     });
 
-    // Observa mudanças na tela de cards
     const levelSelect = document.getElementById("level-select");
     if (levelSelect) {
       observer.observe(levelSelect, { attributes: true });
     }
 
-    // --- CONFIGURAÇÃO DO BOTÃO NEXT ---
     if (this.els.btnNext) {
       this.els.btnNext.onclick = () => {
         if (this.isTyping) {
-          // 1. Para a digitação automática
           if (this.typingInterval) clearInterval(this.typingInterval);
           this.typingInterval = null;
           this.game.audio.stopSpeech();
-
-          // 2. Mostra o texto inteiro imediatamente
           this.els.narratorText.textContent = this.currentFullText;
-
-          // 3. Atualiza o estado
           this.isTyping = false;
-
-          // 4. Para a animação da boca (se estiver rodando)
           if (this.narratorAnimator) {
             this.narratorAnimator.stop();
           }
-        }
-        // CENÁRIO 2: O texto já está completo? (Fechar/Avançar)
-        else {
+        } else {
           this.els.narratorArea.style.display = "none";
           this.game.audio.stopSpeech();
-
           if (this.pendingCallback) {
             const callback = this.pendingCallback;
             this.pendingCallback = null;
@@ -123,14 +106,16 @@ class UIController {
       };
     }
 
-    // --- CONTROLE DE ÁUDIO ---
     if (this.els.volumeSlider) {
       this.els.volumeSlider.addEventListener("input", (e) => {
         const vol = e.target.value;
         this.game.audio.setGlobalVolume(vol);
-        if (vol == 0)
+        if (vol == 0) {
           this.els.btnAudio.innerHTML = '<i class="fas fa-volume-mute"></i>';
-        else this.els.btnAudio.innerHTML = '<i class="fas fa-volume-up"></i>';
+          this.stopTypingAnimation();
+        } else {
+          this.els.btnAudio.innerHTML = '<i class="fas fa-volume-up"></i>';
+        }
       });
     }
 
@@ -139,6 +124,8 @@ class UIController {
         if (this.game.audio.bgm.volume > 0) {
           this.game.audio.lastVol = this.game.audio.bgm.volume;
           this.game.audio.setGlobalVolume(0);
+          this.game.audio.stopSpeech();
+          this.stopTypingAnimation();
           this.els.volumeSlider.value = 0;
           this.els.btnAudio.innerHTML = '<i class="fas fa-volume-mute"></i>';
         } else {
@@ -150,10 +137,8 @@ class UIController {
       };
     }
 
-    // --- TUTORIAL ---
     if (this.els.btnInfo) {
       this.els.btnInfo.onclick = () => {
-        // Garante que o tutorial fique acima de tudo
         this.els.tutorialOverlay.style.display = "flex";
         this.els.tutorialOverlay.style.zIndex = "10001";
       };
@@ -166,134 +151,31 @@ class UIController {
     }
   }
 
-  // --- NOVO MÉTODO PARA GERENCIAR O BOOT ---
-  runBootSequence(audioController, onComplete, customText) {
-    // Agora sim, define qual texto usar
-    const textToShow = customText || this.config.narrator.intro_text;
-
-    const els = {
-      animation: document.getElementById("boot-animation"),
-      byteContainer: document.querySelector(".boot-byte-container"),
-      pulse: document.querySelector(".boot-pulse"),
-      sprite: document.getElementById("boot-byte-sprite"),
-      dialogContainer: document.getElementById("boot-dialog-container"),
-      matrix: document.getElementById("matrix-bg"),
-    };
-
-    // 1. Preparação Inicial
-    if (els.matrix) {
-      els.matrix.classList.remove("hidden-matrix");
-      els.matrix.style.opacity = "0.4";
+  stopTypingAnimation() {
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
+      this.typingInterval = null;
     }
-
-    // Limpezas
-    const existingNarrator = document.getElementById("boot-narrator");
-    if (existingNarrator) existingNarrator.remove();
-    els.dialogContainer.innerHTML = "";
-    els.dialogContainer.classList.remove("visible");
-
-    if (els.sprite) {
-      els.sprite.style.backgroundPosition = "0% 0%";
-      els.sprite.classList.remove("byte-pulsing");
+    this.isTyping = false;
+    if (this.narratorAnimator) {
+      this.narratorAnimator.stop();
     }
-
-    // Mostra Overlay
-    els.animation.style.display = "flex";
-    els.pulse.style.display = "block";
-    els.byteContainer.style.display = "none";
-
-    // 2. Sequência Temporal
-    setTimeout(() => {
-      els.pulse.style.display = "none";
-      els.byteContainer.style.display = "block";
-
-      // Cria o Animator específico para o Boot (Lê do JSON agora!)
-      const bootAnimator = new SpriteAnimator(els.sprite, {
-        ...this.config.theme.assets.narrator_sprite_config,
-        fps: 12,
-      });
-
-      // Fase Pulsação
-      bootAnimator.addClass("byte-pulsing");
-
-      // 3. Montagem do Diálogo (Clonagem)
-      const narratorClone = this.els.narratorArea.cloneNode(true);
-      this._setupBootDialogClone(narratorClone); // Método auxiliar abaixo para não poluir
-
-      els.dialogContainer.appendChild(narratorClone);
-
-      // Referências do Clone
-      const cloneText = narratorClone.querySelector("#narrator-text");
-      const cloneBtn = narratorClone.querySelector("#btn-next-dialog");
-
-      // 4. Início da Fala
-      setTimeout(() => {
-        bootAnimator.removeClass("byte-pulsing");
-        bootAnimator.play();
-        els.dialogContainer.classList.add("visible");
-        audioController.speak(textToShow, "byte");
-        cloneText.textContent = "";
-
-        // Efeito de Digitação
-        let i = 0;
-        const interval = setInterval(() => {
-          if (i < textToShow.length) {
-            cloneText.textContent += textToShow.charAt(i);
-            if (i % 2 === 0) audioController.playTypingBeep("high");
-            i++;
-          } else {
-            clearInterval(interval);
-            bootAnimator.stop();
-          }
-        }, this.config.narrator.typing_speed);
-
-        // 5. Finalização (Click do Botão)
-        cloneBtn.onclick = () => {
-          if (i < textToShow.length) {
-            clearInterval(interval);
-            cloneText.textContent = textToShow;
-            bootAnimator.stop();
-            i = textToShow.length;
-            audioController.stopSpeech();
-          } else {
-            clearInterval(interval);
-            bootAnimator.stop();
-            els.animation.style.display = "none";
-            audioController.stopSpeech();
-
-            // Remove o elemento clone do HTML
-            if (document.getElementById("boot-narrator")) {
-              document.getElementById("boot-narrator").remove();
-            }
-            if (onComplete) onComplete();
-          }
-        };
-      }, 2000); // Delay da pulsação
-    }, 2000); // Delay do flash inicial
   }
 
-  // Método auxiliar privado para limpar o estilo do clone
-  _setupBootDialogClone(clone) {
-    clone.id = "boot-narrator";
-    clone.style.position = "relative";
-    clone.style.bottom = "0";
-    clone.style.left = "0";
-    clone.style.transform = "none";
-    clone.style.margin = "0 auto";
-    clone.style.display = "flex";
-    clone.style.width = "100%";
-
-    const sprite = clone.querySelector("#narrator-sprite");
-    if (sprite) sprite.style.display = "none"; // Remove sprite pequeno
-
-    const name = clone.querySelector("#narrator-name");
-    if (name) name.textContent = this.config.narrator.name;
-
-    const text = clone.querySelector("#narrator-text");
-    if (text) text.textContent = "";
-  }
-
+  // --- ALTERADO AQUI: O Local central que controla a troca de telas ---
   showScreen(screenId) {
+    // 1. Sempre que mudarmos de tela visualmente, paramos qualquer fala anterior
+    this.game.audio.stopSpeech();
+
+    // 2. Paramos a animação de digitação e do sprite
+    this.stopTypingAnimation();
+
+    // 3. Esconde a caixa de diálogo para não ficar "sobra" de texto da tela anterior
+    if (this.els.narratorArea) {
+      this.els.narratorArea.style.display = "none";
+    }
+
+    // Lógica original de troca de classes
     document
       .querySelectorAll(".screen")
       .forEach((s) => (s.style.display = "none"));
@@ -312,12 +194,121 @@ class UIController {
     }
   }
 
-  // Destacar quando exploração completa
+  runBootSequence(audioController, onComplete, customText) {
+    const textToShow = customText || this.config.narrator.intro_text;
+    const els = {
+      animation: document.getElementById("boot-animation"),
+      byteContainer: document.querySelector(".boot-byte-container"),
+      pulse: document.querySelector(".boot-pulse"),
+      sprite: document.getElementById("boot-byte-sprite"),
+      dialogContainer: document.getElementById("boot-dialog-container"),
+      matrix: document.getElementById("matrix-bg"),
+    };
+
+    if (els.matrix) {
+      els.matrix.classList.remove("hidden-matrix");
+      els.matrix.style.opacity = "0.4";
+    }
+
+    const existingNarrator = document.getElementById("boot-narrator");
+    if (existingNarrator) existingNarrator.remove();
+    els.dialogContainer.innerHTML = "";
+    els.dialogContainer.classList.remove("visible");
+
+    if (els.sprite) {
+      els.sprite.style.backgroundPosition = "0% 0%";
+      els.sprite.classList.remove("byte-pulsing");
+    }
+
+    els.animation.style.display = "flex";
+    els.pulse.style.display = "block";
+    els.byteContainer.style.display = "none";
+
+    setTimeout(() => {
+      els.pulse.style.display = "none";
+      els.byteContainer.style.display = "block";
+
+      const bootAnimator = new SpriteAnimator(els.sprite, {
+        ...this.config.theme.assets.narrator_sprite_config,
+        fps: 12,
+      });
+
+      bootAnimator.addClass("byte-pulsing");
+
+      const narratorClone = this.els.narratorArea.cloneNode(true);
+      this._setupBootDialogClone(narratorClone);
+
+      els.dialogContainer.appendChild(narratorClone);
+
+      const cloneText = narratorClone.querySelector("#narrator-text");
+      const cloneBtn = narratorClone.querySelector("#btn-next-dialog");
+
+      setTimeout(() => {
+        bootAnimator.removeClass("byte-pulsing");
+        bootAnimator.play();
+        els.dialogContainer.classList.add("visible");
+        audioController.speak(textToShow, "byte");
+        cloneText.textContent = "";
+
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i < textToShow.length) {
+            cloneText.textContent += textToShow.charAt(i);
+            if (i % 2 === 0) audioController.playTypingBeep("high");
+            i++;
+          } else {
+            clearInterval(interval);
+            bootAnimator.stop();
+          }
+        }, this.config.narrator.typing_speed);
+
+        cloneBtn.onclick = () => {
+          if (i < textToShow.length) {
+            clearInterval(interval);
+            cloneText.textContent = textToShow;
+            bootAnimator.stop();
+            i = textToShow.length;
+            audioController.stopSpeech();
+          } else {
+            clearInterval(interval);
+            bootAnimator.stop();
+            els.animation.style.display = "none";
+            audioController.stopSpeech();
+
+            if (document.getElementById("boot-narrator")) {
+              document.getElementById("boot-narrator").remove();
+            }
+            if (onComplete) onComplete();
+          }
+        };
+      }, 2000);
+    }, 2000);
+  }
+
+  _setupBootDialogClone(clone) {
+    clone.id = "boot-narrator";
+    clone.style.position = "relative";
+    clone.style.bottom = "0";
+    clone.style.left = "0";
+    clone.style.transform = "none";
+    clone.style.margin = "0 auto";
+    clone.style.display = "flex";
+    clone.style.width = "100%";
+
+    const sprite = clone.querySelector("#narrator-sprite");
+    if (sprite) sprite.style.display = "none";
+
+    const name = clone.querySelector("#narrator-name");
+    if (name) name.textContent = this.config.narrator.name;
+
+    const text = clone.querySelector("#narrator-text");
+    if (text) text.textContent = "";
+  }
+
   updateTracker(score, percent, sceneId) {
     this.els.score.textContent = score;
     this.els.progress.textContent = percent + "%";
 
-    // Quando chegar a 100%, destaca o quiz
     if (percent === 100 && sceneId) {
       this.highlightQuizHotspot();
     }
@@ -329,26 +320,25 @@ class UIController {
       this.els.narratorSprite.style.display = "none";
       this.els.narratorArea.style.justifyContent = "center";
     } else {
-      // Configuração do B.Y.T.E.
       this.els.narratorName.textContent = this.defaultNarrator.name;
       this.els.narratorSprite.style.display = "block";
       this.els.narratorSprite.style.backgroundImage = `url('${this.defaultNarrator.image}')`;
       this.els.narratorArea.style.justifyContent = "flex-start";
 
-      // ✅ CORREÇÃO: Paramos o animador novo, se ele existir
       if (this.narratorAnimator) {
         this.narratorAnimator.stop();
       }
     }
 
+    // Garante que para a fala anterior antes de começar a nova
     this.game.audio.speak(text, speaker);
+
     this.pendingCallback = callback;
     this.els.narratorArea.style.display = "flex";
     this.els.narratorText.textContent = "";
     this.currentFullText = text;
     this.isTyping = true;
 
-    // Inicia animação da boca
     if (speaker === "byte" && this.narratorAnimator) {
       this.narratorAnimator.play();
     }
@@ -359,9 +349,7 @@ class UIController {
     this.typingInterval = setInterval(() => {
       this.els.narratorText.textContent += text.charAt(i);
 
-      // 2. Toca o Beep a cada 2 letras (para não ficar irritante demais)
       if (i % 2 === 0) {
-        // Se for vilão usa tom grave ('low'), se não agudo ('high')
         const tone = speaker === "villain" ? "low" : "high";
         this.game.audio.playTypingBeep(tone);
       }
@@ -370,8 +358,6 @@ class UIController {
       if (i >= text.length) {
         clearInterval(this.typingInterval);
         this.isTyping = false;
-
-        // Para a boca
         if (speaker === "byte" && this.narratorAnimator) {
           this.narratorAnimator.stop();
         }
@@ -395,34 +381,28 @@ class UIController {
     this.showScreen("level-select");
   }
 
-  // --- NOVO MÉTODO PARA GERENCIAR VÍDEO/IMAGEM ---
   updateBackground(src) {
     const container = document.getElementById("dynamic-background");
     if (!container || !src) return;
 
-    container.innerHTML = ""; // Limpa o fundo anterior
+    container.innerHTML = "";
 
-    // Verifica se é vídeo (MP4 ou WEBM)
     if (src.endsWith(".mp4") || src.endsWith(".webm")) {
       const video = document.createElement("video");
       video.src = src;
       video.autoplay = true;
       video.loop = true;
-      video.muted = true; // OBRIGATÓRIO para autoplay funcionar no Chrome/Edge
-      video.playsInline = true; // OBRIGATÓRIO para funcionar no iPhone
+      video.muted = true;
+      video.playsInline = true;
       container.appendChild(video);
-    }
-    // Se não for vídeo, assume que é imagem
-    else {
+    } else {
       const img = document.createElement("img");
       img.src = src;
       container.appendChild(img);
     }
   }
 
-  // Destacar que o quiz foi desbloqueado
   highlightQuizHotspot() {
-    // Encontra todos os hotspots de quiz
     const quizHotspots = document.querySelectorAll(
       ".hotspot .fa-clipboard-check, .hotspot .fa-bolt",
     );
@@ -430,14 +410,12 @@ class UIController {
     quizHotspots.forEach((icon) => {
       const hotspotButton = icon.closest(".hotspot-button");
       if (hotspotButton) {
-        // Adiciona efeito de brilho e pulsação
         hotspotButton.style.animation = "pulseQuiz 1.5s infinite";
         hotspotButton.style.boxShadow = "0 0 30px var(--primary-color)";
         hotspotButton.style.borderColor = "var(--primary-color)";
       }
     });
 
-    // Adiciona a animação se não existir
     if (!document.querySelector("#quiz-pulse-style")) {
       const style = document.createElement("style");
       style.id = "quiz-pulse-style";
@@ -549,16 +527,13 @@ class UIController {
     renderQuestion();
   }
 
-  // --- RELATÓRIO DE MISSÃO ---
   showMissionReport(mistakes, totalQuestions, onCloseReport) {
     const qElement = document.getElementById("quiz-question");
     const optsElement = document.getElementById("quiz-options");
 
-    // GARANTE que o modal está visível
     this.els.quizOverlay.style.display = "flex";
     this.els.quizOverlay.style.zIndex = "10000";
 
-    // Pega dados do jogo
     const scene = this.game?.state?.currentSceneId;
     const hotspots =
       this.game?.config?.scenes?.find((s) => s.id === scene)?.hotspots || [];
@@ -574,11 +549,9 @@ class UIController {
         ? Math.round((correctAnswers / totalQuestions) * 100)
         : 0;
 
-    // Título
     qElement.textContent = "RELATÓRIO DE MISSÃO";
     optsElement.innerHTML = "";
 
-    // Container principal - com fundo mais escuro para garantir visibilidade
     const container = document.createElement("div");
     container.style.cssText = `
         width: 100%;
@@ -591,7 +564,6 @@ class UIController {
         border: 1px solid var(--primary-color);
     `;
 
-    // Grid de estatísticas (2 colunas)
     const statsGrid = document.createElement("div");
     statsGrid.style.cssText = `
         display: grid;
@@ -600,7 +572,6 @@ class UIController {
         width: 100%;
     `;
 
-    // Card 1 - Tempo
     const timeCard = document.createElement("div");
     timeCard.style.cssText = `
         background: var(--glass-bg);
@@ -615,7 +586,6 @@ class UIController {
         <div style="font-size: 1.8rem; font-weight: bold; color: var(--primary-color);">${timeSpent}</div>
     `;
 
-    // Card 2 - Pontos
     const scoreCard = document.createElement("div");
     scoreCard.style.cssText = timeCard.style.cssText;
     scoreCard.innerHTML = `
@@ -623,7 +593,6 @@ class UIController {
         <div style="font-size: 1.8rem; font-weight: bold; color: var(--primary-color);">${this.game?.state?.score || 0}</div>
     `;
 
-    // Card 3 - Exploração
     const explorationCard = document.createElement("div");
     explorationCard.style.cssText = timeCard.style.cssText;
     explorationCard.innerHTML = `
@@ -632,7 +601,6 @@ class UIController {
         <div style="font-size: 0.7rem; opacity: 0.7;">locais</div>
     `;
 
-    // Card 4 - Quiz
     const quizCard = document.createElement("div");
     quizCard.style.cssText = timeCard.style.cssText;
     quizCard.innerHTML = `
@@ -641,13 +609,11 @@ class UIController {
         <div style="font-size: 0.7rem; opacity: 0.7;">acertos</div>
     `;
 
-    // Monta o grid
     statsGrid.appendChild(timeCard);
     statsGrid.appendChild(scoreCard);
     statsGrid.appendChild(explorationCard);
     statsGrid.appendChild(quizCard);
 
-    // Linha divisória
     const divider = document.createElement("div");
     divider.style.cssText = `
         width: 100%;
@@ -656,7 +622,6 @@ class UIController {
         margin: 10px 0;
     `;
 
-    // Status de precisão
     const statusCard = document.createElement("div");
     statusCard.style.cssText = `
         background: var(--glass-bg);
@@ -678,7 +643,6 @@ class UIController {
         </div>
     `;
 
-    // Botão
     const closeBtn = document.createElement("button");
     closeBtn.className = "cta-button";
     closeBtn.textContent = "FINALIZAR MISSÃO";
@@ -689,10 +653,8 @@ class UIController {
     `;
 
     closeBtn.onclick = () => {
-      // Remove a classe quando o quiz fechar
       document.body.classList.remove("quiz-active");
 
-      // Restaura z-index normal do narrador
       if (this.els.narratorArea) {
         this.els.narratorArea.style.zIndex = "400";
       }
@@ -701,7 +663,6 @@ class UIController {
       onCloseReport(true);
     };
 
-    // Monta tudo
     container.appendChild(statsGrid);
     container.appendChild(divider);
     container.appendChild(statusCard);
