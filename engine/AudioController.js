@@ -32,22 +32,16 @@ class AudioController {
 
   setGlobalVolume(val) {
     this.globalVolume = parseFloat(val);
-
-    // Se o volume for 0, para a fala imediatamente
-    if (this.globalVolume <= 0) {
-      this.stopSpeech();
-    }
-
     // Mixagem: Música a 25% do volume mestre
     this.bgm.volume = Math.min(1, this.globalVolume * 0.25);
 
-    // --- NOVO: Atualiza volume do alarme se estiver tocando ---
+    // --- Atualiza volume do alarme se estiver tocando ---
     if (this.currentAlarm) {
       this.currentAlarm.volume = Math.min(1, this.globalVolume * 0.3);
     }
   }
 
-  // --- NOVO: Para TUDO (chamado ao sair da aba) ---
+  // --- Para TUDO (chamado ao sair da aba) ---
   stopAll() {
     this.stopBGM();
     this.stopAlarm();
@@ -150,6 +144,18 @@ class AudioController {
   stopSpeech() {
     if (this.synth.speaking || this.synth.pending) {
       this.synth.cancel();
+    }
+  }
+
+  suspendContext() {
+    if (this.audioCtx && this.audioCtx.state === 'running') {
+      this.audioCtx.suspend();
+    }
+  }
+
+  resumeContext() {
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume();
     }
   }
 }

@@ -47,15 +47,25 @@ class GameEngine {
       () => this.goHome(),
     );
 
-    // --- NOVO: Listener global para visibilidade (troca de aba) ---
+    // --- Listener global para visibilidade (troca de aba) ---
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         this.audio.stopAll();
+        this.audio.suspendContext();
         this.ui.stopTypingAnimation();
+      } else {
+        this.audio.resumeContext();  // Reativa o AudioContext ao voltar
+        this.ui.resumeTyping();  // Beep rápido para reativar o áudio
+        const currentScene = this.config?.scenes?.find(s => s.id === this.state?.currentSceneId);
+        if (currentScene?.audio_ambience) {
+          this.audio.playBGM(currentScene.audio_ambience);
+        } else if (this.config?.meta?.menu_bgm && !this.state?.currentSceneId) {
+          this.audio.playBGM(this.config.meta.menu_bgm);
+        }
       }
     });
 
-    // --- NOVO: Listener para reload da página ---
+    // --- Listener para reload da página ---
     window.addEventListener("beforeunload", () => {
       this.audio.stopAll();
     });
@@ -75,8 +85,6 @@ class GameEngine {
     const newBtnNo = document.getElementById("btn-confirm-no");
 
     newBtnYes.onclick = () => {
-      console.log("✅ Missão aceita!");
-
       // PRIMEIRO: Para qualquer animação do boot que possa estar rodando
       if (this.bootSpriteController) {
         this.bootSpriteController.stop();
@@ -105,7 +113,7 @@ class GameEngine {
       // QUINTO: Limpa o estado do jogo se necessário
       document.body.classList.remove("at-start");
 
-      // --- NOVO: Reseta os módulos completados ---
+      // --- Reseta os módulos completados ---
       if (this.state) {
         this.state.completedModules.clear();
       }
@@ -132,8 +140,6 @@ class GameEngine {
     };
 
     newBtnNo.onclick = () => {
-      console.log("❌ Missão recusada - resetando completamente");
-
       // Primeiro esconde o modal
       modal.style.display = "none";
 
@@ -163,9 +169,6 @@ class GameEngine {
     document.getElementById("level-select").style.display = "none";
     // Chama o UIController para fazer o trabalho sujo
     this.ui.runBootSequence(this.audio, () => {
-      // O que acontece quando o boot termina (Callback)
-      console.log("Boot finished, showing confirmation...");
-
       const modal = document.getElementById("mission-confirm-modal");
       modal.style.display = "flex";
 
@@ -236,8 +239,8 @@ class GameEngine {
     // 1. Para TODOS os áudios e FALAS
     if (this.audio) {
       this.audio.stopBGM();
-      this.audio.stopSpeech(); // <--- CRÍTICO: Para a voz do narrador imediatamente
-      this.audio.stopAlarm(); // <--- CRÍTICO: Garante que alarmes parem
+      this.audio.stopSpeech(); // Para a voz do narrador imediatamente
+      this.audio.stopAlarm(); // Garante que alarmes parem
       this.audio.bgm.src = "";
       this.audio.bgm.load();
     }
@@ -306,7 +309,7 @@ class GameEngine {
 
     // 9. Limpa diálogos do narrador e animação de digitação
     if (this.ui) {
-      this.ui.stopTypingAnimation(); // <--- CRÍTICO: Usa o novo método centralizado para parar digitação
+      this.ui.stopTypingAnimation(); // Usa o novo método centralizado para parar digitação
       this.ui.els.narratorArea.style.display = "none";
       this.ui.pendingCallback = null;
     }
@@ -376,7 +379,6 @@ class GameEngine {
       newBtnStart.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log("🎬 Botão INICIAR SISTEMA clicado!");
         this.playBootAnimation();
       };
     }
@@ -395,8 +397,6 @@ class GameEngine {
         matrixBg.style.transition = "opacity 0.3s ease";
       }, 50);
     }
-
-    console.log("✅ Tela inicial restaurada completamente!");
   }
 
   loadMenuScene(sceneData) {
@@ -422,9 +422,6 @@ class GameEngine {
       btnHome.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log(
-          "🏠 Botão home clicado na SELEÇÃO - voltando para tela INICIAL",
-        );
         this.goToStartScreen();
       };
     }
@@ -488,10 +485,6 @@ class GameEngine {
       btnHome.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log(
-          "🏠 Botão home clicado na CENA 360 - voltando para SELEÇÃO de níveis",
-        );
-
         // Volta para o hub (tela de seleção)
         const hub = this.config.scenes.find((s) => s.type === "menu");
         if (hub) {
@@ -547,6 +540,7 @@ class GameEngine {
 
     this.hotspots.loadHotspots(scene, (hotspot) =>
       this.handleHotspotClick(hotspot, scene),
+      this.state
     );
 
     this.updateUI();
@@ -599,10 +593,7 @@ class GameEngine {
   }
 
   openQuiz(hotspot, sceneData) {
-    console.log("📝 Abrindo quiz");
-
     if (!hotspot || !hotspot.questions) {
-      console.error("❌ Quiz hotspot inválido!", hotspot);
       return;
     }
 
@@ -647,10 +638,8 @@ class GameEngine {
     this.ui.updateTracker(this.state.score, percent, this.state.currentSceneId);
   }
 
-  // NOVO MÉTODO 1: Sequência final
+  // MÉTODO: Sequência final
   playFinalSequence() {
-    console.log("🎬 Finalizando jogo - todos os módulos concluídos!");
-
     // 1. Esconde a cena 360
     document.getElementById("scene-container").style.display = "none";
 

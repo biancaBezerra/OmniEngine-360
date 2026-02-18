@@ -104,7 +104,12 @@
         <div id="narrator-area" class="narrator-overlay">
           <div id="narrator-sprite" class="narrator-sprite"></div>
           <div class="dialog-box">
-            <h3 id="narrator-name">SYSTEM</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+              <h3 id="narrator-name" style="margin: 0;">SYSTEM</h3>
+              <button id="btn-narrator-audio" class="narrator-audio-btn" title="Áudio da Narrativa">
+                <i class="fas fa-volume-up"></i>
+              </button>
+            </div>
             <p id="narrator-text"></p>
             <button id="btn-next-dialog" class="next-btn">
               <i class="fas fa-chevron-right"></i>

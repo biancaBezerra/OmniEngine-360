@@ -112,7 +112,6 @@ class UIController {
         this.game.audio.setGlobalVolume(vol);
         if (vol == 0) {
           this.els.btnAudio.innerHTML = '<i class="fas fa-volume-mute"></i>';
-          this.stopTypingAnimation();
         } else {
           this.els.btnAudio.innerHTML = '<i class="fas fa-volume-up"></i>';
         }
@@ -121,11 +120,9 @@ class UIController {
 
     if (this.els.btnAudio) {
       this.els.btnAudio.onclick = () => {
-        if (this.game.audio.bgm.volume > 0) {
-          this.game.audio.lastVol = this.game.audio.bgm.volume;
+        if (this.game.audio.globalVolume > 0) {
+          this.game.audio.lastVol = this.game.audio.globalVolume;
           this.game.audio.setGlobalVolume(0);
-          this.game.audio.stopSpeech();
-          this.stopTypingAnimation();
           this.els.volumeSlider.value = 0;
           this.els.btnAudio.innerHTML = '<i class="fas fa-volume-mute"></i>';
         } else {
@@ -157,12 +154,51 @@ class UIController {
       this.typingInterval = null;
     }
     this.isTyping = false;
+    if (this.currentFullText && this.els.narratorText) {
+      this.lastTypingPosition = this.els.narratorText.textContent.length;
+    }
     if (this.narratorAnimator) {
       this.narratorAnimator.stop();
     }
   }
 
-  // --- ALTERADO AQUI: O Local central que controla a troca de telas ---
+  resumeTyping() {
+    if (!this.currentFullText || this.lastTypingPosition === undefined) return;
+    if (this.lastTypingPosition >= this.currentFullText.length) return;
+    if (this.els.narratorArea.style.display !== 'flex') return;
+    
+    // Determina o speaker
+    const speaker = this.els.narratorName.textContent === this.villainNarrator.name ? 'villain' : 'byte';
+    
+    // Retoma a digitação
+    this.isTyping = true;
+    let i = this.lastTypingPosition;
+    
+    if (speaker === 'byte' && this.narratorAnimator) {
+      this.narratorAnimator.play();
+    }
+    
+    this.typingInterval = setInterval(() => {
+      this.els.narratorText.textContent += this.currentFullText.charAt(i);
+      
+      if (i % 2 === 0 && this.game.audio.globalVolume > 0) {
+        const tone = speaker === 'villain' ? 'low' : 'high';
+        this.game.audio.playTypingBeep(tone);
+      }
+      
+      i++;
+      if (i >= this.currentFullText.length) {
+        clearInterval(this.typingInterval);
+        this.isTyping = false;
+        this.lastTypingPosition = undefined;
+        if (speaker === 'byte' && this.narratorAnimator) {
+          this.narratorAnimator.stop();
+        }
+      }
+    }, this.config.narrator.typing_speed);
+  }
+
+  // --- O Local central que controla a troca de telas ---
   showScreen(screenId) {
     // 1. Sempre que mudarmos de tela visualmente, paramos qualquer fala anterior
     this.game.audio.stopSpeech();
@@ -349,7 +385,7 @@ class UIController {
     this.typingInterval = setInterval(() => {
       this.els.narratorText.textContent += text.charAt(i);
 
-      if (i % 2 === 0) {
+      if (i % 2 === 0 && this.game.audio.globalVolume > 0) {
         const tone = speaker === "villain" ? "low" : "high";
         this.game.audio.playTypingBeep(tone);
       }
@@ -411,8 +447,8 @@ class UIController {
       const hotspotButton = icon.closest(".hotspot-button");
       if (hotspotButton) {
         hotspotButton.style.animation = "pulseQuiz 1.5s infinite";
-        hotspotButton.style.boxShadow = "0 0 30px var(--primary-color)";
-        hotspotButton.style.borderColor = "var(--primary-color)";
+        // hotspotButton.style.boxShadow = "0 0 30px var(--primary-color)";
+        // hotspotButton.style.borderColor = "var(--primary-color)";
       }
     });
 
@@ -660,6 +696,11 @@ class UIController {
       }
 
       this.els.quizOverlay.style.display = "none";
+
+      const quizHotspot = document.querySelector('.hotspot .fa-clipboard-check, .hotspot .fa-bolt');
+      if (quizHotspot) {
+        quizHotspot.closest('.hotspot').classList.add('quiz-completed');
+      }
       onCloseReport(true);
     };
 
