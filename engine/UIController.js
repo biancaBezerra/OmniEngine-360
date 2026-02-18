@@ -154,12 +154,51 @@ class UIController {
       this.typingInterval = null;
     }
     this.isTyping = false;
+    if (this.currentFullText && this.els.narratorText) {
+      this.lastTypingPosition = this.els.narratorText.textContent.length;
+    }
     if (this.narratorAnimator) {
       this.narratorAnimator.stop();
     }
   }
 
-  // --- ALTERADO AQUI: O Local central que controla a troca de telas ---
+  resumeTyping() {
+    if (!this.currentFullText || this.lastTypingPosition === undefined) return;
+    if (this.lastTypingPosition >= this.currentFullText.length) return;
+    if (this.els.narratorArea.style.display !== 'flex') return;
+    
+    // Determina o speaker
+    const speaker = this.els.narratorName.textContent === this.villainNarrator.name ? 'villain' : 'byte';
+    
+    // Retoma a digitação
+    this.isTyping = true;
+    let i = this.lastTypingPosition;
+    
+    if (speaker === 'byte' && this.narratorAnimator) {
+      this.narratorAnimator.play();
+    }
+    
+    this.typingInterval = setInterval(() => {
+      this.els.narratorText.textContent += this.currentFullText.charAt(i);
+      
+      if (i % 2 === 0 && this.game.audio.globalVolume > 0) {
+        const tone = speaker === 'villain' ? 'low' : 'high';
+        this.game.audio.playTypingBeep(tone);
+      }
+      
+      i++;
+      if (i >= this.currentFullText.length) {
+        clearInterval(this.typingInterval);
+        this.isTyping = false;
+        this.lastTypingPosition = undefined;
+        if (speaker === 'byte' && this.narratorAnimator) {
+          this.narratorAnimator.stop();
+        }
+      }
+    }, this.config.narrator.typing_speed);
+  }
+
+  // --- O Local central que controla a troca de telas ---
   showScreen(screenId) {
     // 1. Sempre que mudarmos de tela visualmente, paramos qualquer fala anterior
     this.game.audio.stopSpeech();

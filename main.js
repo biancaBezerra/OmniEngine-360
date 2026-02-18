@@ -47,11 +47,21 @@ class GameEngine {
       () => this.goHome(),
     );
 
-    // --- NOVO: Listener global para visibilidade (troca de aba) ---
+    // --- Listener global para visibilidade (troca de aba) ---
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         this.audio.stopAll();
+        this.audio.suspendContext();
         this.ui.stopTypingAnimation();
+      } else {
+        this.audio.resumeContext();  // Reativa o AudioContext ao voltar
+        this.ui.resumeTyping();  // Beep rápido para reativar o áudio
+        const currentScene = this.config?.scenes?.find(s => s.id === this.state?.currentSceneId);
+        if (currentScene?.audio_ambience) {
+          this.audio.playBGM(currentScene.audio_ambience);
+        } else if (this.config?.meta?.menu_bgm && !this.state?.currentSceneId) {
+          this.audio.playBGM(this.config.meta.menu_bgm);
+        }
       }
     });
 

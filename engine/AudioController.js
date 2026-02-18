@@ -146,4 +146,16 @@ class AudioController {
       this.synth.cancel();
     }
   }
+
+  suspendContext() {
+    if (this.audioCtx && this.audioCtx.state === 'running') {
+      this.audioCtx.suspend();
+    }
+  }
+
+  resumeContext() {
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume();
+    }
+  }
 }
