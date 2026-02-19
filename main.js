@@ -234,8 +234,8 @@ class GameEngine {
     // 1. Para TODOS os áudios e FALAS
     if (this.audio) {
       this.audio.stopBGM();
-      this.audio.stopSpeech(); // Para a voz do narrador imediatamente
-      this.audio.stopAlarm(); // Garante que alarmes parem
+      this.audio.stopSpeech();
+      this.audio.stopAlarm();
       this.audio.bgm.src = "";
       this.audio.bgm.load();
     }
@@ -304,7 +304,7 @@ class GameEngine {
 
     // 9. Limpa diálogos do narrador e animação de digitação
     if (this.ui) {
-      this.ui.stopTypingAnimation(); // Usa o novo método centralizado para parar digitação
+      this.ui.stopTypingAnimation();
       this.ui.els.narratorArea.style.display = "none";
       this.ui.pendingCallback = null;
     }
@@ -402,7 +402,7 @@ class GameEngine {
     const matrixBg = document.getElementById("matrix-bg");
     if (matrixBg) {
       matrixBg.style.opacity = "0";
-      matrixBg.style.transition = "none"; // Remove transição para evitar flash
+      matrixBg.style.transition = "none";
     }
 
     // TERCEIRO: Garantir que o botão home está visível
@@ -447,11 +447,14 @@ class GameEngine {
     // OITAVO: Esconde a cena 360
     document.getElementById("scene-container").style.display = "none";
 
-    // NONO: Restaura a transição da matrix depois de tudo carregado
+    // Restaura a transição da matrix depois de tudo carregado
     setTimeout(() => {
       if (matrixBg) {
         matrixBg.style.transition = "opacity 0.3s ease";
       }
+    }, 100);
+    setTimeout(() => {
+      this.updateNarrationButtons();
     }, 100);
   }
 
@@ -553,7 +556,6 @@ class GameEngine {
         hotspot.content,
         () => {
           if (isFullyExplored && eventNotTriggered && isFirstVisit) {
-            // --- CORREÇÃO: TEXTO DO JSON ---
             this.ui.showNarrator(
               this.config.narrator.messages.verification_unlocked,
               null,
@@ -570,7 +572,6 @@ class GameEngine {
       const isFullyExplored = this.state.isSceneFullyExplored(sceneData.id);
 
       if (!isFullyExplored) {
-        // --- CORREÇÃO: TEXTO DO JSON ---
         this.ui.showNarrator(
           hotspot.locked_message || this.config.narrator.messages.access_denied,
           null,
@@ -678,7 +679,7 @@ function initMatrixBackground() {
     column.style.animationDuration = Math.random() * 4 + 3 + "s";
     column.style.animationDelay = Math.random() * 5 + "s";
     column.style.fontSize = Math.random() * 10 + 14 + "px";
-    column.style.color = "#00FF00"; // Cor fixa para garantir visibilidade
+    column.style.color = "#00FF00";
 
     // Cria uma coluna com 30 números
     let numbers = "";
