@@ -98,12 +98,12 @@ class EventController {
           scene.event.victory_message,
           () => {
             // Verifica se é o último módulo
-            const isLastModule = this.game.state.completeModule(scene.id);
+            const isLastModule = this.game.state.completeModule(scene.id) === true;
             
-            if (isLastModule) {
+            if (isLastModule === true) {
               this.game.playFinalSequence();
             } else {
-              this.game.state.resetScene(scene.id, true);
+              this.game.state.resetScene(scene.id, true, true);
               const hub = this.game.config.scenes.find((s) => s.type === "menu");
               if (hub) {
                 this.game.loadMenuScene(hub);

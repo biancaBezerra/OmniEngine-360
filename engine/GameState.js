@@ -22,10 +22,12 @@ class GameState {
   }
 
   // --- RESET COMPLETO COM PONTUAÇÃO ---
-  resetScene(sceneId, deductQuizPoints = false) {
+  resetScene(sceneId, deductQuizPoints = false, keepModuleCompleted = false) {
     // 1. Remove evento do vilão
     this.eventsTriggered.delete(sceneId);
-    this.completedModules.delete(sceneId);
+     if (!keepModuleCompleted) {
+      this.completedModules.delete(sceneId);
+    }
 
     // 2. Limpa hotspots visitados e SUBTRAI os pontos deles
     const sceneConfig = this.config.scenes.find((s) => s.id === sceneId);
