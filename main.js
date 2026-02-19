@@ -454,7 +454,7 @@ class GameEngine {
       }
     }, 100);
     setTimeout(() => {
-      this.updateNarrationButtons();
+      this.ui.updateNarrationButtons();
     }, 100);
   }
 

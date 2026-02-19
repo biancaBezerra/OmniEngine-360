@@ -26,6 +26,18 @@ class UIController {
     this.narratorAnimator = null;
   }
 
+  updateNarrationButtons() {
+    const isEnabled = this.game.audio.narrationEnabled;
+    const buttons = document.querySelectorAll("#btn-narration");
+    
+    buttons.forEach(btn => {
+      btn.innerHTML = isEnabled 
+        ? '<i class="fas fa-microphone"></i>' 
+        : '<i class="fas fa-microphone-slash"></i>';
+      btn.title = isEnabled ? "Desativar Narração" : "Ativar Narração";
+    });
+  }
+
   init(config, onStartClick, onHomeClick) {
     this.config = config;
     this.els.title.textContent = config.meta.title;
@@ -162,18 +174,6 @@ class UIController {
     }
   }
 
-  updateNarrationButtons() {
-    const isEnabled = this.game.audio.narrationEnabled;
-    const buttons = document.querySelectorAll("#btn-narration");
-    
-    buttons.forEach(btn => {
-      btn.innerHTML = isEnabled 
-        ? '<i class="fas fa-microphone"></i>' 
-        : '<i class="fas fa-microphone-slash"></i>';
-      btn.title = isEnabled ? "Desativar Narração" : "Ativar Narração";
-    });
-  }
-
   stopTypingAnimation() {
     if (this.typingInterval) {
       clearInterval(this.typingInterval);
@@ -189,38 +189,46 @@ class UIController {
   }
 
   resumeTyping() {
-    if (!this.currentFullText || this.lastTypingPosition === undefined) return;
-    if (this.lastTypingPosition >= this.currentFullText.length) return;
+    if (!this.currentFullText || !this.els.narratorText) return;
     if (this.els.narratorArea.style.display !== 'flex') return;
+    
+    // Se já terminou de digitar, não faz nada
+    if (this.els.narratorText.textContent.length >= this.currentFullText.length) {
+      this.isTyping = false;
+      return;
+    }
     
     // Determina o speaker
     const speaker = this.els.narratorName.textContent === this.villainNarrator.name ? 'villain' : 'byte';
     
-    // Retoma a digitação
     this.isTyping = true;
-    let i = this.lastTypingPosition;
+    const startPos = this.els.narratorText.textContent.length;
+    let i = startPos;
     
     if (speaker === 'byte' && this.narratorAnimator) {
       this.narratorAnimator.play();
     }
     
+    if (this.typingInterval) clearInterval(this.typingInterval);
+    
     this.typingInterval = setInterval(() => {
+      if (i >= this.currentFullText.length) {
+        clearInterval(this.typingInterval);
+        this.isTyping = false;
+        if (speaker === 'byte' && this.narratorAnimator) {
+          this.narratorAnimator.stop();
+        }
+        return;
+      }
+      
       this.els.narratorText.textContent += this.currentFullText.charAt(i);
       
-      if (i % 2 === 0 && audioController.narrationEnabled) {
+      if (i % 2 === 0) {
         const tone = speaker === 'villain' ? 'low' : 'high';
         this.game.audio.playTypingBeep(tone);
       }
       
       i++;
-      if (i >= this.currentFullText.length) {
-        clearInterval(this.typingInterval);
-        this.isTyping = false;
-        this.lastTypingPosition = undefined;
-        if (speaker === 'byte' && this.narratorAnimator) {
-          this.narratorAnimator.stop();
-        }
-      }
     }, this.config.narrator.typing_speed);
   }
 
