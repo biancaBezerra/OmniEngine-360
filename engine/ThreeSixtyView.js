@@ -25,15 +25,13 @@ class ThreeSixtyView {
     this.phi = 0;
     this.theta = 0;
 
-    this.hotspots = []; // Array para guardar { element, vector } igual ao original
+    this.hotspots = [];
 
     // Referências para elementos de efeito
     this.redAlertDiv = null;
-    this.glitchDiv = null; // <-- USAR GLITCH EM VEZ DE STATIC
+    this.glitchDiv = null;
     this.smokeDiv = null;
-
-    // Carrega a imagem do glitch do theme assets
-    this.glitchImage = null; // Será setado depois pelo GameEngine
+    this.glitchImage = null;
 
     this.initInput();
     this.animate();
@@ -60,7 +58,6 @@ class ThreeSixtyView {
     this.lon = yaw;
     this.lat = pitch;
 
-    // Força a atualização imediata da câmera para não ter "pulo" visual
     this.updateCamera();
   }
 
@@ -79,12 +76,10 @@ class ThreeSixtyView {
 
   // LÓGICA ORIGINAL RESTAURADA
   addHotspotToTracking(element, positionData) {
-    // Converte graus para radianos
     const yawRad = THREE.MathUtils.degToRad(positionData.yaw);
     const pitchRad = THREE.MathUtils.degToRad(positionData.pitch);
-    const radius = 400; // Raio fixo igual ao original
+    const radius = 400;
 
-    // Calcula posição XYZ esférica
     const x = radius * Math.cos(pitchRad) * Math.sin(yawRad);
     const y = radius * Math.sin(pitchRad);
     const z = -radius * Math.cos(pitchRad) * Math.cos(yawRad);
@@ -102,7 +97,6 @@ class ThreeSixtyView {
   }
 
   updateHotspots() {
-    // Usa a lógica de projeção original
     this.hotspots.forEach((h) => {
       const position = h.vector.clone();
       position.project(this.camera);
@@ -112,7 +106,6 @@ class ThreeSixtyView {
       const hotspotDir = h.vector.clone().normalize();
 
       // Verifica se está na frente da câmera (Dot Product)
-      // Valor > 0.2 garante que não apareça distorcido nas bordas
       const isVisible = cameraDir.dot(hotspotDir) > 0.2;
 
       if (isVisible) {
@@ -149,14 +142,11 @@ class ThreeSixtyView {
   onWindowResize() {
     if (!this.camera || !this.renderer) return;
 
-    // Atualiza a proporção da câmera
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
 
-    // Atualiza o tamanho do renderizador
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    //Recalcula tamanho dos hotspots se necessário
     this.updateHotspots();
   }
 
@@ -207,7 +197,6 @@ class ThreeSixtyView {
     );
   }
 
-  // Receber a imagem do glitch do config
   setGlitchImage(src) {
     this.glitchImage = src;
   }
@@ -232,7 +221,7 @@ class ThreeSixtyView {
     }
   }
 
-  // EFEITO GLITCH USANDO O ASSET DO CONFIG
+  // EFEITO GLITCH OTIMIZADO (substitui o static)
   showGlitchEffect() {
     // Remove glitch existente
     this.hideGlitchEffect();
@@ -262,7 +251,7 @@ class ThreeSixtyView {
       { bg: "rgba(255, 0, 0, 0.8)", shadow: "red" },
     ];
 
-    // Função para criar linhas - ESQUERDA, DIREITA e CENTRO
+    // Função para criar linhas de glitch
     const createLines = (count, positionType) => {
       for (let i = 0; i < count; i++) {
         const line = document.createElement("div");
@@ -270,7 +259,6 @@ class ThreeSixtyView {
         const height =
           Math.random() < 0.7 ? 1 : Math.floor(Math.random() * 3) + 2;
 
-        // LARGURA VARIÁVEL - NUNCA 100%
         let width, left, right;
 
         switch (positionType) {
@@ -308,20 +296,17 @@ class ThreeSixtyView {
       }
     };
 
-    // Distribuição balanceada
     createLines(40, "left");
     createLines(40, "right");
     createLines(30, "center");
 
-    // Append ANTES do fade in =====
     document.body.appendChild(this.glitchDiv);
 
-    // Força reflow e aplica fade in
+    // Fade in
     setTimeout(() => {
       this.glitchDiv.style.opacity = "1";
     }, 10);
 
-    // CSS simplificado com uma única animação
     if (!document.querySelector("#glitch-optimized-style")) {
       const style = document.createElement("style");
       style.id = "glitch-optimized-style";
@@ -340,7 +325,6 @@ class ThreeSixtyView {
 
   hideGlitchEffect() {
     if (this.glitchDiv) {
-      // Fade out suave
       this.glitchDiv.style.transition = "opacity 0.6s ease";
       this.glitchDiv.style.opacity = "0";
 
@@ -354,7 +338,6 @@ class ThreeSixtyView {
     }
   }
 
-  // Mantém showStaticEffect como alias para compatibilidade
   showStaticEffect() {
     this.showGlitchEffect();
   }

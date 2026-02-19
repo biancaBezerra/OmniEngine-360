@@ -26,6 +26,18 @@ class UIController {
     this.narratorAnimator = null;
   }
 
+  updateNarrationButtons() {
+    const isEnabled = this.game.audio.narrationEnabled;
+    const buttons = document.querySelectorAll("#btn-narration");
+    
+    buttons.forEach(btn => {
+      btn.innerHTML = isEnabled 
+        ? '<i class="fas fa-microphone"></i>' 
+        : '<i class="fas fa-microphone-slash"></i>';
+      btn.title = isEnabled ? "Desativar Narração" : "Ativar Narração";
+    });
+  }
+
   init(config, onStartClick, onHomeClick) {
     this.config = config;
     this.els.title.textContent = config.meta.title;
@@ -121,16 +133,30 @@ class UIController {
     if (this.els.btnAudio) {
       this.els.btnAudio.onclick = () => {
         if (this.game.audio.globalVolume > 0) {
+          // Mudo: salva volume mas ZERA o volume global (afeta apenas BGM/SFX)
           this.game.audio.lastVol = this.game.audio.globalVolume;
           this.game.audio.setGlobalVolume(0);
           this.els.volumeSlider.value = 0;
           this.els.btnAudio.innerHTML = '<i class="fas fa-volume-mute"></i>';
         } else {
+          // Desmudo: restaura volume global
           const vol = this.game.audio.lastVol || 0.5;
           this.game.audio.setGlobalVolume(vol);
           this.els.volumeSlider.value = vol;
           this.els.btnAudio.innerHTML = '<i class="fas fa-volume-up"></i>';
         }
+      };
+    }
+
+    const originalNarrationBtn = document.getElementById("btn-narration");
+    if (originalNarrationBtn) {
+      this.updateNarrationButtons();
+      
+      originalNarrationBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.game.audio.toggleNarration();
+        this.updateNarrationButtons();
       };
     }
 
@@ -163,38 +189,46 @@ class UIController {
   }
 
   resumeTyping() {
-    if (!this.currentFullText || this.lastTypingPosition === undefined) return;
-    if (this.lastTypingPosition >= this.currentFullText.length) return;
+    if (!this.currentFullText || !this.els.narratorText) return;
     if (this.els.narratorArea.style.display !== 'flex') return;
+    
+    // Se já terminou de digitar, não faz nada
+    if (this.els.narratorText.textContent.length >= this.currentFullText.length) {
+      this.isTyping = false;
+      return;
+    }
     
     // Determina o speaker
     const speaker = this.els.narratorName.textContent === this.villainNarrator.name ? 'villain' : 'byte';
     
-    // Retoma a digitação
     this.isTyping = true;
-    let i = this.lastTypingPosition;
+    const startPos = this.els.narratorText.textContent.length;
+    let i = startPos;
     
     if (speaker === 'byte' && this.narratorAnimator) {
       this.narratorAnimator.play();
     }
     
+    if (this.typingInterval) clearInterval(this.typingInterval);
+    
     this.typingInterval = setInterval(() => {
+      if (i >= this.currentFullText.length) {
+        clearInterval(this.typingInterval);
+        this.isTyping = false;
+        if (speaker === 'byte' && this.narratorAnimator) {
+          this.narratorAnimator.stop();
+        }
+        return;
+      }
+      
       this.els.narratorText.textContent += this.currentFullText.charAt(i);
       
-      if (i % 2 === 0 && this.game.audio.globalVolume > 0) {
+      if (i % 2 === 0) {
         const tone = speaker === 'villain' ? 'low' : 'high';
         this.game.audio.playTypingBeep(tone);
       }
       
       i++;
-      if (i >= this.currentFullText.length) {
-        clearInterval(this.typingInterval);
-        this.isTyping = false;
-        this.lastTypingPosition = undefined;
-        if (speaker === 'byte' && this.narratorAnimator) {
-          this.narratorAnimator.stop();
-        }
-      }
     }, this.config.narrator.typing_speed);
   }
 
@@ -283,14 +317,20 @@ class UIController {
         bootAnimator.removeClass("byte-pulsing");
         bootAnimator.play();
         els.dialogContainer.classList.add("visible");
-        audioController.speak(textToShow, "byte");
+        
+        if (audioController.narrationEnabled) {
+          audioController.speak(textToShow, "byte");
+        }
+        
         cloneText.textContent = "";
 
         let i = 0;
         const interval = setInterval(() => {
           if (i < textToShow.length) {
             cloneText.textContent += textToShow.charAt(i);
-            if (i % 2 === 0) audioController.playTypingBeep("high");
+            if (i % 2 === 0 && audioController.narrationEnabled) {
+              audioController.playTypingBeep("high");
+            }
             i++;
           } else {
             clearInterval(interval);
@@ -339,6 +379,16 @@ class UIController {
 
     const text = clone.querySelector("#narrator-text");
     if (text) text.textContent = "";
+    
+    const narrationBtn = clone.querySelector("#btn-narration");
+    if (narrationBtn) {
+      narrationBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.game.audio.toggleNarration();
+        this.updateNarrationButtons();
+      };
+    }
   }
 
   updateTracker(score, percent, sceneId) {
@@ -385,7 +435,7 @@ class UIController {
     this.typingInterval = setInterval(() => {
       this.els.narratorText.textContent += text.charAt(i);
 
-      if (i % 2 === 0 && this.game.audio.globalVolume > 0) {
+      if (i % 2 === 0 && this.game.audio.narrationVolume > 0) {
         const tone = speaker === "villain" ? "low" : "high";
         this.game.audio.playTypingBeep(tone);
       }
@@ -458,7 +508,7 @@ class UIController {
       style.textContent = `
         @keyframes pulseQuiz {
           0% { transform: translate(-50%, -50%) scale(1); }
-          50% { transform: translate(-50%, -50%) scale(1.2); }
+          50% { transform: translate(-50%, -50%) scale(1.08); }
           100% { transform: translate(-50%, -50%) scale(1); }
         }
       `;
@@ -474,10 +524,6 @@ class UIController {
     const optsElement = document.getElementById("quiz-options");
 
     document.body.classList.add("quiz-active");
-
-    if (this.els.narratorArea) {
-      this.els.narratorArea.style.zIndex = "10001";
-    }
 
     let poolDePerguntas = [...quizData.questions];
 
@@ -509,7 +555,7 @@ class UIController {
 
       const q = selectedQuestions[currentQuestionIndex];
 
-      qElement.textContent = `Questão ${currentQuestionIndex + 1}/${totalQuestions}: ${q.text}`;
+      qElement.innerHTML = `<span style="color: var(--primary-color);">Questão ${currentQuestionIndex + 1}/${totalQuestions}:</span> ${q.text}`;
       optsElement.innerHTML = "";
 
       const shuffledOptions = [...q.options];
@@ -600,6 +646,8 @@ class UIController {
         border: 1px solid var(--primary-color);
     `;
 
+    container.classList.add("mission-report-container");
+
     const statsGrid = document.createElement("div");
     statsGrid.style.cssText = `
         display: grid;
@@ -654,9 +702,12 @@ class UIController {
     divider.style.cssText = `
         width: 100%;
         height: 2px;
+        min-height: 2px;
+        flex-shrink: 0;
         background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
         margin: 10px 0;
     `;
+    divider.setAttribute('id', 'mission-report-divider');
 
     const statusCard = document.createElement("div");
     statusCard.style.cssText = `
@@ -690,10 +741,6 @@ class UIController {
 
     closeBtn.onclick = () => {
       document.body.classList.remove("quiz-active");
-
-      if (this.els.narratorArea) {
-        this.els.narratorArea.style.zIndex = "400";
-      }
 
       this.els.quizOverlay.style.display = "none";
 

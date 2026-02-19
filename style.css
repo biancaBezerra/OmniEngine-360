@@ -1,5 +1,3 @@
-/* style.css - VERSÃO MOBILE-FIRST COMPLETA E RESPONSIVA */
-
 :root {
   /* Valores Default - serão sobrescritos pelo ThemeController */
   --primary-color: #00ff00;
@@ -32,11 +30,11 @@
   --z-villain: 100;
   --z-ui: 50;
   --z-mission-tracker: 51;
-  --z-narrator: 10002;
   --z-modal: 10000;
   --z-tutorial: 10001;
   --z-boot: 20000;
-  --z-home-button: 2147483647;
+  --z-home-button: 20001;
+  --z-narrator: 20002;
 }
 
 /* ===== RESET E BASE ===== */
@@ -121,6 +119,10 @@ body {
   pointer-events: auto;
 }
 
+#game-ui {
+  z-index: 1000 !important;
+}
+
 #game-ui.active {
   background: transparent;
   pointer-events: none;
@@ -166,7 +168,6 @@ body {
   width: 100%;
   max-width: 300px;
   margin: 0 auto;
-  /* height: 25%; */
 }
 
 /* ===== TIPOGRAFIA RESPONSIVA ===== */
@@ -391,20 +392,19 @@ body.quiz-active #mission-tracker {
   box-shadow: 0 0 15px var(--error-color);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  transition: all 0.3s ease;
+  transition: all 0.3s ease-out, box-shadow 0.3s ease-out;
 }
 
 .hotspot.visited .hotspot-button {
   border-color: var(--primary-color) !important;
-  background: rgba(0, 255, 0, 0.2);
-  box-shadow: 0 0 15px var(--primary-color);
+  background: rgba(30, 133, 30, 0.418);
+  box-shadow: 0 0 20px #00e400;
 }
 
 .hotspot:hover .hotspot-button {
   background: var(--error-color);
   color: #000;
   border-color: var(--error-color) !important;
-  transform: translate(-50%, -50%) scale(1.15);
 }
 
 .hotspot.visited:hover .hotspot-button {
@@ -574,7 +574,7 @@ body.quiz-active #mission-tracker {
 }
 
 #quiz-question {
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin-bottom: 16px;
   word-break: break-word;
 }
@@ -588,15 +588,23 @@ body.quiz-active #mission-tracker {
 
 .quiz-opt {
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 12px;
-  color: white;
+  color: rgb(219, 219, 219);
   cursor: pointer;
   border-radius: 6px;
   font-size: 0.9rem;
   transition: all 0.2s;
   word-break: break-word;
   width: 100%;
+}
+
+.quiz-opt:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--accent-color);
+  color: #ffffff;
+  /* transform: translateX(5px); */
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
 }
 
 .quiz-opt.correct {
@@ -608,6 +616,46 @@ body.quiz-active #mission-tracker {
 .quiz-opt.wrong {
   background: var(--error-color);
   border-color: var(--error-color);
+  color: black;
+}
+
+/* ===== RESPONSIVIDADE PARA ESTATÍSTICAS DO QUIZ ===== */
+#quiz-options [style*="font-size: 1.8rem"] {
+  font-size: clamp(1.2rem, 5vw, 1.8rem) !important;
+}
+
+#quiz-options [style*="font-size: 1.5rem"] {
+  font-size: clamp(1.1rem, 4vw, 1.5rem) !important;
+}
+
+#quiz-options [style*="font-size: 1.3rem"] {
+  font-size: clamp(1rem, 3.5vw, 1.3rem) !important;
+}
+
+#quiz-options [style*="font-size: 0.8rem"] {
+  font-size: clamp(0.7rem, 2.5vw, 0.8rem) !important;
+}
+
+#quiz-options [style*="font-size: 0.7rem"] {
+  font-size: clamp(0.6rem, 2vw, 0.7rem) !important;
+}
+
+/* ===== MISSION REPORT ===== */
+.mission-report-container {
+  max-height: 70vh;
+  overflow-y: auto;
+  margin: 10px 0;
+}
+
+.quiz-panel:has(.mission-report-container) {
+  max-height: 85vh;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.quiz-panel .mission-report-container {
+  max-height: 65vh;
 }
 
 /* ===== VILLAIN ===== */
@@ -694,12 +742,10 @@ body.at-start #btn-home {
 /* Permitir cliques através do level-select apenas na área do botão */
 #level-select.active {
   pointer-events: none;
-  /* Desativa cliques em toda a tela */
 }
 
 #level-select.active .glass-panel {
   pointer-events: auto;
-  /* Reativa cliques APENAS nos cards */
 }
 
 /* ===== VOLUME SLIDER ===== */
@@ -769,7 +815,7 @@ body.at-start #btn-home {
 
 .matrix-column {
   position: absolute;
-  top: -100%;
+  top: 0;
   width: 20px;
   text-align: center;
   font-size: 14px;
@@ -779,11 +825,12 @@ body.at-start #btn-home {
   white-space: nowrap;
   animation: matrixFall linear infinite;
   opacity: 0;
+  will-change: transform, opacity;
 }
 
 @keyframes matrixFall {
   0% {
-    top: -100%;
+    transform: translateY(-100%);
     opacity: 0;
   }
 
@@ -796,7 +843,7 @@ body.at-start #btn-home {
   }
 
   100% {
-    top: 100%;
+    transform: translateY(100vh);
     opacity: 0;
   }
 }
@@ -1228,7 +1275,7 @@ body.at-start #btn-home {
   }
 
   50% {
-    transform: translate(-50%, -50%) scale(1.15);
+    transform: translate(-50%, -50%) scale(1.05);
   }
 
   100% {
@@ -1354,7 +1401,7 @@ body.at-start #btn-home {
   }
 }
 
-.narrator-audio-btn {
+.narration-btn {
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: var(--accent-color);
@@ -1370,14 +1417,14 @@ body.at-start #btn-home {
   flex-shrink: 0;
 }
 
-.narrator-audio-btn.muted {
+.narration-btn.muted {
   background: var(--error-color);
   color: white;
   border-color: var(--error-color);
   opacity: 0.7;
 }
 
-.narrator-audio-btn:hover {
+.narration-btn:hover {
   background: var(--accent-color);
   color: #000;
   transform: scale(1.1);
@@ -1403,7 +1450,6 @@ body.at-start #btn-home {
 
   .glass-panel {
     max-width: 500px;
-    /* height: 20%; */
   }
 
   h2 {
@@ -1471,6 +1517,10 @@ body.at-start #btn-home {
   .confirm-panel h2 {
     font-size: 1.5rem;
   }
+
+  .quiz-panel:has(.mission-report-container) {
+    margin-top: 60px;
+  }
 }
 
 /* Desktop pequeno (1024px e acima) */
@@ -1488,7 +1538,6 @@ body.at-start #btn-home {
 
   .glass-panel {
     max-width: 500px;
-    /* height: 40%; */
   }
 
   h2 {
@@ -1599,7 +1648,7 @@ body.at-start #btn-home {
   }
 
   #cards-container {
-    max-height: 45vh;
+    max-height: 30vh;
     min-height: auto;
     height: auto;
     overflow-y: auto;
@@ -1657,6 +1706,21 @@ body.at-start #btn-home {
   #villain-sprite {
     width: 250px;
     height: 250px;
+  }
+
+  .quiz-panel {
+    max-width: 95%;
+    padding: 12px
+  }
+
+  .mission-report-container {
+    padding: 15px !important;
+    gap: 15px !important;
+  }
+
+  .quiz-panel:has(.mission-report-container) {
+    margin-top: 40px;
+    max-height: 90vh;
   }
 }
 
@@ -1733,9 +1797,8 @@ body.at-start #btn-home {
   }
 }
 
-/* ===== QUIZ ACTIVE ===== */
-body.quiz-active #game-ui {
-  z-index: calc(var(--z-modal) + 1);
+body.quiz-active #narrator-area {
+  z-index: calc(var(--z-modal) + 1) !important;
 }
 
 body.quiz-active .narrator-overlay {
@@ -1789,4 +1852,29 @@ body.quiz-active .dialog-box {
   #cards-container::-webkit-scrollbar {
     width: 8px;
   }
+}
+
+/* Otimização de GPU para Mobile: Reduz peso do efeito de vidro */
+@media screen and (max-width: 768px) {
+  .glass-panel, 
+  #mission-tracker, 
+  .icon-btn, 
+  #btn-home,
+  .dialog-box,
+  .level-card {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+}
+
+/* Força a renderização na Placa de Vídeo (GPU Acceleration) */
+.narrator-sprite, 
+#villain-sprite, 
+.boot-byte-sprite, 
+.cta-button.pulsing,
+.hotspot-button {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, filter, box-shadow;
 }

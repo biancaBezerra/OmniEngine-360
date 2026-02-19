@@ -8,7 +8,6 @@ class GameState {
     this.totalHotspotsInScene = 0;
     this.sceneStartTime = 0;
     this.quizMistakes = 0;
-    // NOVO: Rastrear módulos concluídos
     this.completedModules = new Set();
   }
 
@@ -22,10 +21,12 @@ class GameState {
   }
 
   // --- RESET COMPLETO COM PONTUAÇÃO ---
-  resetScene(sceneId, deductQuizPoints = false) {
+  resetScene(sceneId, deductQuizPoints = false, keepModuleCompleted = false) {
     // 1. Remove evento do vilão
     this.eventsTriggered.delete(sceneId);
-    this.completedModules.delete(sceneId);
+     if (!keepModuleCompleted) {
+      this.completedModules.delete(sceneId);
+    }
 
     // 2. Limpa hotspots visitados e SUBTRAI os pontos deles
     const sceneConfig = this.config.scenes.find((s) => s.id === sceneId);
@@ -71,7 +72,7 @@ class GameState {
     this.totalHotspotsInScene = 0;
     this.sceneStartTime = 0;
     this.quizMistakes = 0;
-    this.completedModules.clear(); // NOVO - Limpa módulos concluídos
+    this.completedModules.clear();
     this.notifyTracker();
   }
 
@@ -100,7 +101,7 @@ class GameState {
 
   addScore(points) {
     this.score += points;
-    this.notifyTracker(); // Garante atualização visual
+    this.notifyTracker();
   }
 
   // Função auxiliar para atualizar a UI

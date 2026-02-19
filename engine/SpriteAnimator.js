@@ -8,8 +8,6 @@ class SpriteAnimator {
     this.interval = null;
     this.currentFrame = 0;
 
-    // CÁLCULO DINÂMICO (Corrige o alinhamento para qualquer tamanho de sprite)
-    // Se tiver apenas 1 coluna, o passo é 0. Se tiver mais, divide 100% pelo número de intervalos.
     this.stepX = this.cols > 1 ? 100 / (this.cols - 1) : 0;
     this.stepY = this.rows > 1 ? 100 / (this.rows - 1) : 0;
   }
@@ -22,8 +20,6 @@ class SpriteAnimator {
       const col = this.currentFrame % this.cols;
       const row = Math.floor(this.currentFrame / this.cols);
 
-      // AQUI ESTAVA O ERRO: Removemos os números fixos (20 e 50.5)
-      // Agora usamos o cálculo automático baseado no JSON
       const x = col * this.stepX;
       const y = row * this.stepY;
 

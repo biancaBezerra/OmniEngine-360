@@ -79,31 +79,29 @@ class EventController {
     this.showVillainSprite();
     this.game.view360.startVictoryGlow();
 
-    // 1. O Glitch fala a derrota ("Nããão! Dados... organizados...")
+    // 1. O Glitch fala a derrota
     this.game.ui.showNarrator(
       scene.event.villain_defeat,
       () => {
-        // --- TUDO AQUI ACONTECE SÓ DEPOIS QUE O GLITCH TERMINA ---
-
         this.game.view360.stopVictoryGlow();
         this.hideVillainSprite();
 
-        // 2. AGORA SIM: Toca o som de vitória (Junto com o Byte)
+        // 2. AGORA SIM: Toca o som de vitória
         if (scene.event.victory_sound) {
           this.game.audio.playSFX(scene.event.victory_sound);
         }
 
-        // 3. O Byte fala a vitória ("Ameaça neutralizada!")
+        // 3. O Byte fala a vitória
         this.game.ui.showNarrator(
           scene.event.victory_message,
           () => {
             // Verifica se é o último módulo
-            const isLastModule = this.game.state.completeModule(scene.id);
+            const isLastModule = this.game.state.completeModule(scene.id) === true;
             
-            if (isLastModule) {
+            if (isLastModule === true) {
               this.game.playFinalSequence();
             } else {
-              this.game.state.resetScene(scene.id, true);
+              this.game.state.resetScene(scene.id, true, true);
               const hub = this.game.config.scenes.find((s) => s.type === "menu");
               if (hub) {
                 this.game.loadMenuScene(hub);

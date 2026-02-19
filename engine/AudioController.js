@@ -2,14 +2,16 @@ class AudioController {
   constructor() {
     this.bgm = new Audio();
     this.bgm.loop = true;
-    this.bgm.volume = 0.2; // Começa baixo
+    this.bgm.volume = 0.2;
 
-    this.currentAlarm = null; // --- NOVO: Controle de alarme
+    this.currentAlarm = null;
 
     this.isLocked = true;
     this.synth = window.speechSynthesis;
     this.audioCtx = null;
     this.globalVolume = 0.5;
+    this.narrationVolume = 1.0;
+    this.narrationEnabled = true;
   }
 
   unlock() {
@@ -48,13 +50,12 @@ class AudioController {
     this.stopSpeech();
   }
 
-  // --- NOVO: Tocar Alarme em Loop ---
   playAlarm(src) {
     if (!src) return;
-    this.stopAlarm(); // Para anterior
+    this.stopAlarm();
 
     this.currentAlarm = new Audio(src);
-    this.currentAlarm.loop = true; // LOOP INFINITO
+    this.currentAlarm.loop = true;
     this.currentAlarm.volume = Math.min(1, this.globalVolume * 0.3);
     this.currentAlarm.play().catch((e) => console.warn("Alarme bloqueado"));
   }
@@ -89,7 +90,7 @@ class AudioController {
   }
 
   playTypingBeep(tone = "high") {
-    if (!this.audioCtx || this.globalVolume <= 0) return;
+    if (!this.audioCtx || !this.narrationEnabled) return;
 
     const osc = this.audioCtx.createOscillator();
     const gainNode = this.audioCtx.createGain();
@@ -107,21 +108,27 @@ class AudioController {
       osc.frequency.setValueAtTime(800, now);
     }
 
-    gainNode.gain.setValueAtTime(this.globalVolume * 0.1, now);
+    gainNode.gain.setValueAtTime(this.narrationVolume * 0.1, now);
     gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
 
     osc.start(now);
     osc.stop(now + 0.05);
   }
 
-  speak(text, character) {
-    if (this.globalVolume <= 0) return;
+  toggleNarration() {
+    this.narrationEnabled = !this.narrationEnabled;
+    if (!this.narrationEnabled) {
+      this.stopSpeech();
+    }
+    return this.narrationEnabled;
+  }
 
-    // Garante cancelamento antes de nova fala
+  speak(text, character) {
+    if (!this.narrationEnabled) return;
     this.stopSpeech();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.volume = Math.min(1, this.globalVolume * 2);
+    utterance.volume = this.narrationVolume;
     utterance.lang = "pt-BR";
 
     const voices = this.synth.getVoices();
