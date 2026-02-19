@@ -11,7 +11,7 @@ class HotspotController {
       const parts = posInput.split(",").map(Number);
       return { yaw: parts[0] || 0, pitch: parts[1] || 0 };
     }
-    return posInput; // Já é objeto
+    return posInput;
   }
 
   loadHotspots(sceneData, onClick, gameState) {

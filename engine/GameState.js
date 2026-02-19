@@ -8,7 +8,6 @@ class GameState {
     this.totalHotspotsInScene = 0;
     this.sceneStartTime = 0;
     this.quizMistakes = 0;
-    // NOVO: Rastrear módulos concluídos
     this.completedModules = new Set();
   }
 
@@ -73,7 +72,7 @@ class GameState {
     this.totalHotspotsInScene = 0;
     this.sceneStartTime = 0;
     this.quizMistakes = 0;
-    this.completedModules.clear(); // NOVO - Limpa módulos concluídos
+    this.completedModules.clear();
     this.notifyTracker();
   }
 
@@ -102,7 +101,7 @@ class GameState {
 
   addScore(points) {
     this.score += points;
-    this.notifyTracker(); // Garante atualização visual
+    this.notifyTracker();
   }
 
   // Função auxiliar para atualizar a UI
