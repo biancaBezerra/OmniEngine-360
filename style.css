@@ -1,5 +1,3 @@
-/* style.css - VERSÃO MOBILE-FIRST COMPLETA E RESPONSIVA */
-
 :root {
   /* Valores Default - serão sobrescritos pelo ThemeController */
   --primary-color: #00ff00;
@@ -170,7 +168,6 @@ body {
   width: 100%;
   max-width: 300px;
   margin: 0 auto;
-  /* height: 25%; */
 }
 
 /* ===== TIPOGRAFIA RESPONSIVA ===== */
@@ -591,15 +588,23 @@ body.quiz-active #mission-tracker {
 
 .quiz-opt {
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 12px;
-  color: white;
+  color: rgb(219, 219, 219);
   cursor: pointer;
   border-radius: 6px;
   font-size: 0.9rem;
   transition: all 0.2s;
   word-break: break-word;
   width: 100%;
+}
+
+.quiz-opt:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--accent-color);
+  color: #ffffff;
+  /* transform: translateX(5px); */
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
 }
 
 .quiz-opt.correct {
@@ -611,6 +616,7 @@ body.quiz-active #mission-tracker {
 .quiz-opt.wrong {
   background: var(--error-color);
   border-color: var(--error-color);
+  color: black;
 }
 
 /* ===== RESPONSIVIDADE PARA ESTATÍSTICAS DO QUIZ ===== */
@@ -736,12 +742,10 @@ body.at-start #btn-home {
 /* Permitir cliques através do level-select apenas na área do botão */
 #level-select.active {
   pointer-events: none;
-  /* Desativa cliques em toda a tela */
 }
 
 #level-select.active .glass-panel {
   pointer-events: auto;
-  /* Reativa cliques APENAS nos cards */
 }
 
 /* ===== VOLUME SLIDER ===== */
@@ -1397,7 +1401,7 @@ body.at-start #btn-home {
   }
 }
 
-.narrator-audio-btn {
+.narration-btn {
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: var(--accent-color);
@@ -1413,21 +1417,19 @@ body.at-start #btn-home {
   flex-shrink: 0;
 }
 
-.narrator-audio-btn.muted {
+.narration-btn.muted {
   background: var(--error-color);
   color: white;
   border-color: var(--error-color);
   opacity: 0.7;
 }
 
-.narrator-audio-btn:hover {
+.narration-btn:hover {
   background: var(--accent-color);
   color: #000;
   transform: scale(1.1);
   box-shadow: 0 0 10px var(--glass-border);
 }
-
-
 
 /* ===== MEDIA QUERIES - MOBILE FIRST ===== */
 
@@ -1448,7 +1450,6 @@ body.at-start #btn-home {
 
   .glass-panel {
     max-width: 500px;
-    /* height: 20%; */
   }
 
   h2 {
@@ -1537,7 +1538,6 @@ body.at-start #btn-home {
 
   .glass-panel {
     max-width: 500px;
-    /* height: 40%; */
   }
 
   h2 {
@@ -1797,11 +1797,6 @@ body.at-start #btn-home {
   }
 }
 
-/* ===== QUIZ ACTIVE ===== */
-/* body.quiz-active #game-ui {
-  z-index: calc(var(--z-modal) + 1);
-} */
-
 body.quiz-active #narrator-area {
   z-index: calc(var(--z-modal) + 1) !important;
 }
@@ -1867,7 +1862,7 @@ body.quiz-active .dialog-box {
   #btn-home,
   .dialog-box,
   .level-card {
-    backdrop-filter: blur(4px); /* Reduzido de 10px para aliviar o processador */
+    backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
   }
 }
